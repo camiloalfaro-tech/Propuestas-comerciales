@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Propuestas · Mercado Pago Chile</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mp:#009EE3; --mpd:#007AB5; --mpl:#E8F5FC;
+  --navy:#00366B; --yellow:#FFE600; --ydk:#D4C000;
+  --green:#00A650; --glt:#E6F7EE;
+  --orange:#FF7733; --olt:#FFF0E6;
+  --red:#E52020; --rlt:#FDEAEA;
+  --g90:#111827; --g60:#4B5563; --g40:#9CA3AF;
+  --g15:#E5E7EB; --g08:#F3F4F6; --g04:#F9FAFB;
+  --white:#fff; --bg:#EEF2F7;
+  --r:12px; --rsm:8px;
+  --sh:0 1px 3px rgba(0,0,0,.05),0 4px 14px rgba(0,0,0,.04);
+  --shm:0 4px 16px rgba(0,0,0,.09),0 1px 4px rgba(0,0,0,.05);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--g90);min-height:100vh;font-size:13px;line-height:1.55}
+
+/* ── HEADER ── */
+.hdr{background:var(--navy);height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--yellow)}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.logo{font-size:14px;font-weight:800;color:#fff;letter-spacing:-.02em}
+.logo em{color:var(--yellow);font-style:normal}
+.hsep{width:1px;height:20px;background:rgba(255,255,255,.2)}
+.hsub{font-size:11px;font-weight:500;color:rgba(255,255,255,.65)}
+.hbadge{background:var(--yellow);color:var(--navy);font-size:9px;font-weight:800;padding:3px 9px;border-radius:4px;letter-spacing:.07em;text-transform:uppercase}
+
+/* ── TRACKING BANNER ── */
+.tracking-banner{display:none;background:var(--white);border-bottom:1px solid var(--g15);padding:12px 20px}
+.tracking-banner.visible{display:block}
+.ti{max-width:760px;margin:0 auto}
+.th{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.tt{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.07em}
+.ts{font-size:11px;color:var(--g60)}
+.ts span{font-weight:700}
+.ts .red{color:var(--red)}
+.tbtns{display:flex;gap:6px}
+.tbtn{padding:4px 10px;border-radius:6px;border:1.5px solid var(--g15);background:var(--g04);font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;color:var(--g60);transition:all .15s}
+.tbtn:hover{border-color:var(--mp);color:var(--mp)}
+.tbtn.red{color:var(--red)}
+.tbtn.red:hover{border-color:var(--red)}
+.filtros{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.fb{padding:4px 11px;border:1.5px solid var(--g15);border-radius:99px;background:var(--white);font-family:inherit;font-size:11px;font-weight:500;color:var(--g60);cursor:pointer;transition:all .15s}
+.fb:hover{border-color:var(--mp);color:var(--mp)}
+.fb.sel{border-color:var(--mp);background:var(--mpl);color:var(--mp);font-weight:700}
+.hist-list{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto}
+.hi{background:var(--g04);border:1px solid var(--g15);border-radius:8px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;cursor:pointer;transition:box-shadow .15s}
+.hi:hover{box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.hi-name{font-size:13px;font-weight:600}
+.hi-name span{font-weight:400;color:var(--g60)}
+.hi-meta{font-size:11px;color:var(--g60);margin-top:1px}
+.hi-badge{font-size:11px;font-weight:700;padding:3px 11px;border-radius:99px;white-space:nowrap;flex-shrink:0}
+
+/* ── LAYOUT ── */
+.wrap{max-width:760px;margin:0 auto;padding:24px 16px 80px}
+
+/* ── STEP BAR ── */
+.steps-bar{display:flex;background:var(--white);border:1px solid var(--g15);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);margin-bottom:24px}
+.step-item{flex:1;padding:14px 16px;display:flex;align-items:center;gap:10px;border-right:1px solid var(--g15);transition:background .2s}
+.step-item:last-child{border-right:none}
+.step-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;background:var(--g15);color:var(--g60);flex-shrink:0;transition:all .2s}
+.step-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g40)}
+.step-name{font-size:12px;font-weight:600;color:var(--g60);margin-top:1px}
+.step-item.active .step-num{background:var(--mp);color:#fff}
+.step-item.active .step-label{color:var(--mp)}
+.step-item.active .step-name{color:var(--g90)}
+.step-item.done .step-num{background:var(--green);color:#fff}
+.step-item.done .step-label{color:var(--green)}
+@media(max-width:500px){.step-name{display:none}.step-item{justify-content:center}}
+
+/* ── SECTION / CARD ── */
+.sec{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--g40);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.sec::after{content:'';flex:1;height:1px;background:var(--g15)}
+.card{background:var(--white);border-radius:var(--r);border:1px solid var(--g15);padding:18px 20px;margin-bottom:12px;box-shadow:var(--sh)}
+.card.a-mp{border-top:3px solid var(--mp)}
+.card.a-yel{border-top:3px solid var(--yellow)}
+.card.a-grn{border-top:3px solid var(--green)}
+
+/* ── FORMS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:500px){.g2,.g3{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.field:last-child{margin-bottom:0}
+.field label{font-size:11px;font-weight:600;color:var(--g60);text-transform:uppercase;letter-spacing:.05em}
+.field input,.field select,.field textarea{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;padding:9px 11px;border:1.5px solid var(--g15);border-radius:var(--rsm);background:var(--g04);color:var(--g90);width:100%;-webkit-appearance:none;transition:border-color .15s,background .15s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--mp);background:var(--white);box-shadow:0 0 0 3px rgba(0,158,227,.1)}
+.field textarea{resize:vertical;min-height:58px}
+.mono{font-family:'JetBrains Mono',monospace!important;font-size:12px!important}
+.hint{font-size:10px;color:var(--g40);margin-top:2px}
+
+/* ── PILLS ── */
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{display:flex;align-items:center;gap:5px;padding:7px 13px;border:1.5px solid var(--g15);border-radius:99px;cursor:pointer;font-size:12px;font-weight:500;color:var(--g60);transition:all .15s;user-select:none}
+.pill input{display:none}
+.pill.sel{border-color:var(--mp);background:var(--mpl);color:var(--mp);font-weight:700}
+.pill.sel-grn{border-color:var(--green);background:var(--glt);color:var(--green);font-weight:700}
+
+/* ── TIPO SELECTOR ── */
+.tipo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.tipo-grid{grid-template-columns:1fr}}
+.tipo-card{border:2px solid var(--g15);border-radius:var(--r);padding:16px;cursor:pointer;background:var(--white);transition:all .2s;position:relative;overflow:hidden}
+.tipo-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--g15);transition:background .2s}
+.tipo-card.sel{border-color:var(--mp);box-shadow:0 0 0 3px rgba(0,158,227,.1)}
+.tipo-card.sel::before{background:var(--mp)}
+.tipo-card input{display:none}
+.tipo-icon{font-size:22px;margin-bottom:8px}
+.tipo-name{font-size:14px;font-weight:700;color:var(--g90);margin-bottom:3px}
+.tipo-desc{font-size:11px;color:var(--g60);line-height:1.5}
+.tipo-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--g15);display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all .2s}
+.tipo-card.sel .tipo-check{background:var(--mp);color:#fff}
+
+/* ── NIVEL / TRAMO BADGE ── */
+.nbadge{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:99px;font-size:11px;font-weight:700;border:1.5px solid;margin-bottom:12px}
+.nb-emp{background:var(--g08);color:var(--g40);border-color:var(--g15)}
+.nb-1{background:#FFF8E1;color:#E65100;border-color:rgba(230,81,0,.3)}
+.nb-2{background:#FFF3CD;color:#C77800;border-color:rgba(199,120,0,.3)}
+.nb-3{background:var(--glt);color:#00874A;border-color:rgba(0,135,74,.3)}
+.nb-4{background:var(--mpl);color:var(--mpd);border-color:rgba(0,158,227,.3)}
+.nb-5{background:#F3E8FF;color:#7C3AED;border-color:rgba(124,58,237,.3)}
+
+/* ── TABLA ── */
+.tbl{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:12px;border-radius:8px;overflow:hidden;border:1px solid var(--g15)}
+.tbl th{background:var(--g08);padding:7px 9px;text-align:left;font-weight:700;color:var(--g60);font-size:10px;letter-spacing:.04em}
+.tbl th.c{text-align:center}
+.tbl td{padding:7px 9px;border-top:1px solid var(--g15);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--g90);text-align:center}
+.tbl td.lbl{text-align:left;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:11px}
+.tbl td.sub{text-align:left;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--g40)}
+.tbl tr.at td{background:var(--mpl);color:var(--mpd);font-weight:700}
+.tbl tr.at td:first-child{border-left:3px solid var(--mp)}
+.th-yel{background:var(--yellow)!important;color:var(--navy)!important;font-weight:800!important;text-align:center!important}
+.th-gray{background:#EAECEF!important;color:var(--g60)!important;text-align:center!important}
+
+/* ── CALC DUAL ── */
+.calc-dual{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:500px){.calc-dual{grid-template-columns:1fr}}
+.calc-col{border-radius:10px;padding:14px;border:1px solid}
+.cc-deb{background:var(--glt);border-color:rgba(0,166,80,.2)}
+.cc-cre{background:var(--mpl);border-color:rgba(0,158,227,.2)}
+.col-ttl{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px}
+.cc-deb .col-ttl{color:var(--green)}
+.cc-cre .col-ttl{color:var(--mp)}
+.cr{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:11px;border-bottom:1px dashed rgba(0,0,0,.07)}
+.cr:last-child{border-bottom:none}
+.cr .lb{color:var(--g60)}
+.cr .vl{font-weight:600;font-family:'JetBrains Mono',monospace;font-size:11px}
+.cr.neg .vl{color:var(--orange)}
+.res-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.chip{border-radius:8px;padding:9px 6px;text-align:center}
+.chip .cl{font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px;opacity:.75}
+.chip .cv{font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.chip-r{background:var(--olt)}.chip-r .cv{color:var(--orange)}
+.chip-g{background:var(--glt)}.chip-g .cv{color:var(--green)}
+
+/* ── CALC BOX MP PRO (cuotas) ── */
+.cb{background:var(--mpl);border-radius:10px;padding:14px}
+.ctot{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+
+/* ── STAT BOX ── */
+.stat-box{background:var(--mpl);border:1px solid rgba(0,158,227,.2);border-radius:10px;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.stat-box.grn{background:var(--glt);border-color:rgba(0,166,80,.2)}
+.stat-val{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.stat-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mp);margin-bottom:2px}
+.stat-box.grn .stat-lbl{color:var(--green)}
+.stat-sub{font-size:10px;color:var(--g60);margin-top:2px}
+
+/* ── TOGGLE ── */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--g04);border:1px solid var(--g15);border-radius:10px;margin-bottom:10px}
+.ti-title{font-size:13px;font-weight:600}
+.ti-sub{font-size:11px;color:var(--g60);margin-top:1px}
+.tog{width:42px;height:23px;border-radius:99px;background:var(--g15);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.tog.on{background:var(--mp)}
+.tog-thumb{width:17px;height:17px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tog.on .tog-thumb{left:22px}
+
+/* ── MISC ── */
+.ssub{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--g60);text-transform:uppercase;margin:10px 0 8px}
+.ssub span{font-weight:400;letter-spacing:0;text-transform:none;color:var(--g40)}
+.conf{background:#FFFBEA;border:1px solid rgba(204,186,0,.4);border-radius:8px;padding:9px 13px;font-size:11px;color:#7A6000;display:flex;align-items:flex-start;gap:8px;margin-bottom:12px}
+.info-box{background:var(--g04);border:1px solid var(--g15);border-radius:8px;padding:11px 13px;font-size:12px;color:var(--g60);line-height:1.7;margin-top:4px}
+.info-box strong{color:var(--g90)}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;margin-bottom:10px}
+.tag-grn{background:var(--glt);color:var(--green);border:1px solid rgba(0,166,80,.2)}
+.tag-yel{background:#FFFBEA;color:#7A6000;border:1px solid rgba(204,186,0,.35)}
+
+/* ── ACTIONS CARD ── */
+.actions-card{background:var(--navy);border-radius:var(--r);padding:20px;margin-top:20px;box-shadow:var(--shm)}
+.actions-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:14px}
+.actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.actions-grid{grid-template-columns:1fr}}
+.abtn-base{padding:13px 16px;border-radius:var(--rsm);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;border:none;width:100%}
+.abtn-base:active{transform:scale(.98)}
+.ab-copy{background:var(--yellow);color:var(--navy);font-size:14px;grid-column:1/-1;padding:16px}
+.ab-copy:hover{background:var(--ydk)}
+.ab-prev{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.2)!important}
+.ab-prev:hover{background:rgba(255,255,255,.2)}
+.ab-cal{background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);border:1.5px solid rgba(255,255,255,.15)!important}
+.ab-cal:hover{background:rgba(255,255,255,.15)}
+
+/* ── MODALS ── */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,22,45,.65);z-index:200;align-items:flex-start;justify-content:center;overflow-y:auto;padding:20px}
+.ov.open{display:flex}
+.mdl{background:#fff;border-radius:var(--r);width:100%;max-width:660px;padding:22px;margin:auto;animation:su .2s ease;box-shadow:var(--shm)}
+@keyframes su{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.mh h2{font-size:15px;font-weight:700;margin:0;color:var(--navy)}
+.mcl{width:28px;height:28px;border-radius:var(--rsm);border:1px solid var(--g15);background:none;cursor:pointer;font-size:15px;color:var(--g60);display:flex;align-items:center;justify-content:center}
+.tabs{display:flex;gap:3px;background:var(--g08);border-radius:var(--rsm);padding:3px;margin-bottom:12px}
+.tab{flex:1;padding:7px;border:none;background:transparent;border-radius:6px;font-family:inherit;font-size:12px;font-weight:600;color:var(--g60);cursor:pointer;transition:all .15s}
+.tab.act{background:#fff;color:var(--g90);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.tc{display:none}.tc.act{display:block}
+iframe.ep{width:100%;height:500px;border:1px solid var(--g15);border-radius:var(--rsm)}
+.cbox{background:#0D1B2A;color:#7EC8E3;border-radius:var(--rsm);padding:14px;font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.6;max-height:400px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+.arow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.mbtn{padding:10px;border-radius:var(--rsm);border:1.5px solid var(--g15);background:var(--g04);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;color:var(--g90);display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s}
+.mbtn:hover{border-color:var(--mp);color:var(--mp);background:var(--mpl)}
+.mbtn.p{background:var(--mp);color:#fff;border-color:var(--mp)}
+.mbtn.p:hover{background:var(--mpd)}
+.cov{display:none;position:fixed;inset:0;background:rgba(0,22,45,.65);z-index:300;align-items:center;justify-content:center;padding:20px}
+.cov.open{display:flex}
+.cmdl{background:#fff;border-radius:var(--r);width:100%;max-width:420px;padding:22px;animation:su .2s ease;box-shadow:var(--shm)}
+.cmdl h2{font-size:15px;font-weight:700;margin:0 0 14px;color:var(--navy)}
+.dov{display:none;position:fixed;inset:0;background:rgba(0,22,45,.65);z-index:500;align-items:center;justify-content:center;padding:20px}
+.dov.open{display:flex}
+.dmdl{background:#fff;border-radius:var(--r);width:100%;max-width:440px;padding:22px;animation:su .2s ease;box-shadow:var(--shm)}
+
+/* ── TOAST / SBAR ── */
+.tst{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--navy);color:#fff;padding:10px 18px;border-radius:var(--rsm);font-size:12px;font-weight:600;z-index:999;transition:transform .3s cubic-bezier(.175,.885,.32,1.275);pointer-events:none;white-space:nowrap;box-shadow:var(--shm)}
+.tst.show{transform:translateX(-50%) translateY(0)}
+
+/* ── PANEL ── */
+.panel{display:none}
+.panel.active{display:block}
+.btn-ghost{background:var(--g08);color:var(--g60);border:1.5px solid var(--g15);font-family:inherit;font-size:13px;font-weight:600;padding:11px 16px;border-radius:var(--rsm);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .15s;width:100%;margin-top:8px}
+.btn-ghost:hover{border-color:var(--mp);color:var(--mp);background:var(--mpl)}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-l">
+    <div class="logo">mercado<em>pago</em></div>
+    <div class="hsep"></div>
+    <span class="hsub">Generador de Propuestas</span>
+  </div>
+  <span class="hbadge">Chile 2026</span>
+</header>
+
+<!-- TRACKING BANNER -->
+<div class="tracking-banner" id="trackingBanner">
+  <div class="ti">
+    <div class="th">
+      <div>
+        <div class="tt">📬 Seguimiento de propuestas</div>
+        <div class="ts" id="trackingStats">—</div>
+      </div>
+      <div class="tbtns">
+        <button class="tbtn" onclick="exportarCSV()">⬇ CSV</button>
+        <button class="tbtn red" onclick="limpiarHistorial()">🗑 Limpiar</button>
+      </div>
+    </div>
+    <div class="filtros" id="filtrosBtns">
+      <button onclick="setFiltro('todos',this)" class="fb sel">Todos</button>
+      <button onclick="setFiltro('vencido',this)" class="fb">🔴 Vencidos</button>
+      <button onclick="setFiltro('hoy',this)" class="fb">🟡 Hoy</button>
+      <button onclick="setFiltro('manana',this)" class="fb">🟠 Mañana</button>
+      <button onclick="setFiltro('ok',this)" class="fb">🟢 Al día</button>
+      <button onclick="setFiltro('respondido',this)" class="fb">✅ Respondidos</button>
+    </div>
+    <div class="hist-list" id="histList"></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- STEPS BAR -->
+<div class="steps-bar">
+  <div class="step-item active" id="step-1">
+    <div class="step-num">1</div>
+    <div><div class="step-label">Paso 1</div><div class="step-name">Datos del cliente</div></div>
+  </div>
+  <div class="step-item" id="step-2">
+    <div class="step-num">2</div>
+    <div><div class="step-label">Paso 2</div><div class="step-name">Tipo de propuesta</div></div>
+  </div>
+  <div class="step-item" id="step-3">
+    <div class="step-num">3</div>
+    <div><div class="step-label">Paso 3</div><div class="step-name">Condiciones y envío</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PASO 1 · DATOS DEL CLIENTE
+══════════════════════════════════════ -->
+<div class="sec">Paso 1 — Cliente y ejecutivo</div>
+<div class="card a-mp">
+  <div class="g2" style="margin-bottom:10px">
+    <div class="field"><label>Nombre del contacto *</label><input type="text" id="cli" placeholder="José Vergara" oninput="syncStepBar()"></div>
+    <div class="field"><label>Nombre del negocio *</label><input type="text" id="neg" placeholder="Cafetería El Origen" oninput="syncStepBar()"></div>
+  </div>
+  <div class="g2" style="margin-bottom:10px">
+    <div class="field"><label>Email del cliente</label><input type="email" id="emc" placeholder="jose@negocio.cl"></div>
+    <div class="field"><label>Rubro</label><input type="text" id="rub" placeholder="Cafetería / Retail"></div>
+  </div>
+  <div class="field" style="margin-bottom:8px">
+    <label>Contexto del saludo</label>
+    <div class="pills">
+      <label class="pill sel" id="sal-conv" onclick="setSal('conv',this)"><input type="radio" name="sal"> Como conversamos</label>
+      <label class="pill" id="sal-vis" onclick="setSal('vis',this)"><input type="radio" name="sal"> Pasé por tu negocio</label>
+      <label class="pill" id="sal-ref" onclick="setSal('ref',this)"><input type="radio" name="sal"> Por referido</label>
+    </div>
+  </div>
+  <div class="field" id="ubiF" style="display:none">
+    <label>Ubicación / comuna</label>
+    <input type="text" id="ubi" placeholder="Providencia, Santiago">
+  </div>
+</div>
+<div class="card a-mp">
+  <div class="g2">
+    <div class="field"><label>Ejecutivo comercial</label><input type="text" id="ejec" placeholder="Camilo Alfaro"></div>
+    <div class="field"><label>Teléfono / WhatsApp</label><input type="text" id="tel" placeholder="+56 9 1234 5678"></div>
+  </div>
+  <div class="field">
+    <label>Notas adicionales <span style="font-weight:400;text-transform:none;color:var(--g40)">(aparecen en el email)</span></label>
+    <textarea id="notas" placeholder="Ej: Acordamos visita el lunes · Cliente interesado en boleta electrónica"></textarea>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PASO 2 · TIPO DE PROPUESTA
+══════════════════════════════════════ -->
+<div class="sec" style="margin-top:20px">Paso 2 — Tipo de propuesta</div>
+<div class="card">
+  <div class="tipo-grid">
+
+    <div class="tipo-card sel" id="tipo-pro" onclick="setTipo('pro')">
+      <input type="radio" name="tipo" checked>
+      <div class="tipo-check">✓</div>
+      <div class="tipo-icon">💳</div>
+      <div class="tipo-name">Mercado Pago Pro</div>
+      <div class="tipo-desc">Suscripción mensual · POS incluido · tasas fija + variable · cuotas sin interés</div>
+    </div>
+
+    <div class="tipo-card" id="tipo-escala" onclick="setTipo('escala')">
+      <input type="radio" name="tipo">
+      <div class="tipo-check">✓</div>
+      <div class="tipo-icon">📊</div>
+      <div class="tipo-name">Pricing por Escala</div>
+      <div class="tipo-desc">Point Smart 2 · tasas D0/D10 por nivel TPV · boleta electrónica opcional</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PASO 3 · CONDICIONES
+══════════════════════════════════════ -->
+<div class="sec" style="margin-top:20px">Paso 3 — Condiciones comerciales</div>
+
+<!-- ─── PANEL MP PRO ─── -->
+<div class="panel active" id="panel-pro">
+
+  <div class="card a-mp">
+    <!-- TPV y tabla de tramos -->
+    <div class="field" style="margin-bottom:12px">
+      <label>TPV mensual estimado ($)</label>
+      <input type="number" id="pro-tpv" class="mono" placeholder="Ej: 20000000" oninput="rcPro()">
+      <span class="hint">Las tasas de débito y crédito se autocompletan según el tramo</span>
+    </div>
+    <div id="pro-tbg" class="nbadge nb-emp">⬆ Ingresá el TPV para ver el tramo</div>
+
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Tramo</th><th>TPV</th>
+          <th class="c">Deb.$</th><th class="c">Deb.%</th>
+          <th class="c">Cre.$</th><th class="c">Cre.%</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr id="pro-tr1"><td class="lbl">T1</td><td class="sub">&lt; $5M</td><td>$89</td><td>0,74%</td><td>$99</td><td>1,99%</td></tr>
+        <tr id="pro-tr2"><td class="lbl">T2</td><td class="sub">$5M – $15M</td><td>$84</td><td>0,74%</td><td>$99</td><td>1,89%</td></tr>
+        <tr id="pro-tr3"><td class="lbl">T3</td><td class="sub">$15M – $30M</td><td>$79</td><td>0,69%</td><td>$94</td><td>1,84%</td></tr>
+        <tr id="pro-tr4"><td class="lbl">T4</td><td class="sub">≥ $30M</td><td>$74</td><td>0,69%</td><td>$89</td><td>1,79%</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Tasas (solo lectura cuando hay TPV, editables sin él) -->
+    <div class="ssub">Débito <span>· se autocompletan con el TPV · editables sin él</span></div>
+    <div class="g2" style="margin-bottom:12px">
+      <div class="field"><label>Fijo débito ($)</label><input type="number" id="pro-fjD" class="mono" placeholder="—" oninput="rcProManual()"></div>
+      <div class="field"><label>% débito</label><input type="number" id="pro-prD" class="mono" placeholder="—" step="0.01" oninput="rcProManual()"></div>
+    </div>
+    <div class="ssub">Crédito <span>· se autocompletan con el TPV · editables sin él</span></div>
+    <div class="g2" style="margin-bottom:12px">
+      <div class="field"><label>Fijo crédito ($)</label><input type="number" id="pro-fjC" class="mono" placeholder="—" oninput="rcProManual()"></div>
+      <div class="field"><label>% crédito</label><input type="number" id="pro-prC" class="mono" placeholder="—" step="0.01" oninput="rcProManual()"></div>
+    </div>
+
+    <!-- Ticket compartido -->
+    <div class="ssub" style="margin-top:4px">Ticket de simulación</div>
+    <div class="field" style="max-width:240px">
+      <label>Monto de venta ($)</label>
+      <input type="number" id="pro-tkt" class="mono" value="500000" oninput="rcPro()">
+    </div>
+  </div>
+
+  <!-- ① Débito vs Crédito contado -->
+  <div class="card a-mp">
+    <div class="ssub" style="margin-top:0">① Débito y crédito · contado</div>
+    <div class="calc-dual">
+      <div class="calc-col cc-deb">
+        <div class="col-ttl">💳 Débito</div>
+        <div class="cr"><span class="lb">Ticket</span><span class="vl" id="pro-d-t">—</span></div>
+        <div class="cr neg"><span class="lb">Com. fija</span><span class="vl" id="pro-d-f">—</span></div>
+        <div class="cr neg"><span class="lb">Com. %</span><span class="vl" id="pro-d-p">—</span></div>
+        <div class="cr neg"><span class="lb">IVA 19%</span><span class="vl" id="pro-d-i">—</span></div>
+        <div class="res-row">
+          <div class="chip chip-r"><div class="cl">Costo</div><div class="cv" id="pro-d-tot">—</div></div>
+          <div class="chip chip-g"><div class="cl">Recibe</div><div class="cv" id="pro-d-liq">—</div></div>
+        </div>
+      </div>
+      <div class="calc-col cc-cre">
+        <div class="col-ttl">💳 Crédito contado</div>
+        <div class="cr"><span class="lb">Ticket</span><span class="vl" id="pro-c-t">—</span></div>
+        <div class="cr neg"><span class="lb">Com. fija</span><span class="vl" id="pro-c-f">—</span></div>
+        <div class="cr neg"><span class="lb">Com. %</span><span class="vl" id="pro-c-p">—</span></div>
+        <div class="cr neg"><span class="lb">IVA 19%</span><span class="vl" id="pro-c-i">—</span></div>
+        <div class="res-row">
+          <div class="chip chip-r"><div class="cl">Costo</div><div class="cv" id="pro-c-tot">—</div></div>
+          <div class="chip chip-g"><div class="cl">Recibe</div><div class="cv" id="pro-c-liq">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② Cuotas sin interés -->
+  <div class="card a-mp">
+    <div class="ssub" style="margin-top:0">② Cuotas sin interés · diferenciador</div>
+    <div class="g2" style="margin-bottom:12px">
+      <div class="field">
+        <label>Cuotas ofrecidas</label>
+        <select id="pro-cuotas" onchange="rcPro()">
+          <option value="3">3x (1,99%)</option>
+          <option value="6" selected>6x (3,49%)</option>
+          <option value="9">9x (4,99%)</option>
+          <option value="12">12x (6,99%)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tasa cuotas %</label>
+        <input type="number" id="pro-prQ" class="mono" readonly style="background:var(--g08);color:var(--g40)">
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:12px;max-width:240px">
+      <label>Ticket para simulación de cuotas ($)</label>
+      <input type="number" id="pro-tktQ" class="mono" value="1000000" oninput="rcPro()">
+      <span class="hint">Independiente del ticket de débito/crédito</span>
+    </div>
+    <div class="cb">
+      <div class="cr"><span class="lb">Ticket</span><span class="vl" id="pro-q-t">—</span></div>
+      <div class="cr neg"><span class="lb">Com. fija crédito</span><span class="vl" id="pro-q-f">—</span></div>
+      <div class="cr neg"><span class="lb">Tasa % crédito</span><span class="vl" id="pro-q-p">—</span></div>
+      <div class="cr neg"><span class="lb">Tasa cuotas</span><span class="vl" id="pro-q-q">—</span></div>
+      <div class="cr neg"><span class="lb">IVA 19%</span><span class="vl" id="pro-q-i">—</span></div>
+      <div class="ctot">
+        <div class="chip chip-r"><div class="cl">Comisión total</div><div class="cv" id="pro-q-tot">—</div></div>
+        <div class="chip chip-g"><div class="cl">Recibe al instante</div><div class="cv" id="pro-q-liq">—</div></div>
+      </div>
+    </div>
+    <div style="background:var(--glt);border:1px solid rgba(0,166,80,.2);border-radius:var(--rsm);padding:10px 12px;font-size:11px;color:var(--green);font-weight:600;margin-top:10px">
+      💡 El cliente paga en cuotas — vos recibís <strong>el total al instante</strong>, sin esperar
+    </div>
+  </div>
+
+</div><!-- /panel-pro -->
+
+<!-- ─── PANEL PRICING POR ESCALA ─── -->
+<div class="panel" id="panel-escala">
+
+  <!-- Point Smart 2 -->
+  <div class="card a-mp">
+    <div class="tag tag-grn">✓ Sin costo de arriendo mensual</div>
+    <div class="g2" style="margin-bottom:12px">
+      <div class="field">
+        <label>Cantidad de terminales</label>
+        <input type="number" id="esc-qty" class="mono" value="1" min="1" max="20" oninput="rcEsc()">
+        <span class="hint">$59.900 IVA incluido por unidad</span>
+      </div>
+      <div class="field">
+        <label>Acreditación</label>
+        <div class="pills" style="margin-top:4px">
+          <label class="pill sel sel-grn" id="acred-d0" onclick="setAcred('D0',this)"><input type="radio" name="acred"> ⚡ D0 — Instante</label>
+          <label class="pill" id="acred-d10" onclick="setAcred('D10',this)"><input type="radio" name="acred"> 📅 D10 — 10 días</label>
+        </div>
+        <span class="hint" id="acredHelp" style="color:var(--green);font-weight:600;margin-top:5px">D0: disponible de inmediato</span>
+      </div>
+    </div>
+    <div class="stat-box" style="margin-bottom:6px">
+      <div>
+        <div class="stat-lbl">Inversión total terminales</div>
+        <div class="stat-val" id="esc-totalEq">$59.900</div>
+        <div class="stat-sub" id="esc-detalleEq">1 terminal × $59.900</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--g60);margin-bottom:2px">Precio unitario</div>
+        <div style="font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--mp)">$59.900</div>
+        <div style="font-size:10px;color:var(--g60)">IVA incluido · sin arriendo</div>
+      </div>
+    </div>
+    <div class="info-box"><strong>Incluye:</strong> Conexión 4G + Wi-Fi · Batería larga duración · Impresión de comprobante · Acepta débito, crédito, prepago y billeteras digitales</div>
+  </div>
+
+  <!-- Escalas -->
+  <div class="card a-yel">
+    <div class="conf">🔒 <span><strong>Uso interno.</strong> La tabla no se envía al cliente — solo las tasas negociadas.</span></div>
+    <div class="field" style="margin-bottom:12px">
+      <label>TPV mensual proyectado ($)</label>
+      <input type="number" id="esc-tpv" class="mono" placeholder="12000000" oninput="rcEsc()">
+      <span class="hint">Determina el nivel y autocompleta las tasas</span>
+    </div>
+    <div id="esc-badge" class="nbadge nb-emp">↑ Ingresa el TPV para ver el nivel</div>
+
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th rowspan="2">Nivel</th>
+          <th rowspan="2">TPV / Mes</th>
+          <th class="th-yel c" colspan="2">D0 — Al instante</th>
+          <th class="th-gray c" colspan="2">D10 — 10 días</th>
+        </tr>
+        <tr>
+          <th class="c">TD</th><th class="c">TC</th>
+          <th class="c">TD</th><th class="c">TC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr id="escN1"><td class="lbl">N1</td><td class="sub">&lt; $2M</td><td>2,19%</td><td>2,69%</td><td>2,05%</td><td>2,55%</td></tr>
+        <tr id="escN2"><td class="lbl">N2</td><td class="sub">$2M – $4M</td><td>1,99%</td><td>2,59%</td><td>1,85%</td><td>2,45%</td></tr>
+        <tr id="escN3"><td class="lbl">N3</td><td class="sub">$4M – $8M</td><td>1,79%</td><td>2,49%</td><td>1,65%</td><td>2,35%</td></tr>
+        <tr id="escN4"><td class="lbl">N4</td><td class="sub">$8M – $25M</td><td>1,59%</td><td>2,39%</td><td>1,45%</td><td>2,25%</td></tr>
+        <tr id="escN5"><td class="lbl">N5</td><td class="sub">&gt; $25M</td><td>1,45%</td><td>2,25%</td><td>1,35%</td><td>2,15%</td></tr>
+      </tbody>
+    </table>
+
+    <div class="ssub">Tasas negociadas <span>· estas SÍ van al correo</span></div>
+    <div class="g2">
+      <div class="field"><label>Tasa débito %</label><input type="number" id="esc-prD" class="mono" placeholder="—" step="0.01" oninput="rcEsc()"></div>
+      <div class="field"><label>Tasa crédito %</label><input type="number" id="esc-prC" class="mono" placeholder="—" step="0.01" oninput="rcEsc()"></div>
+    </div>
+  </div>
+
+  <!-- Simulación -->
+  <div class="card a-mp">
+    <div class="ssub" style="margin-top:0">Simulación de venta</div>
+    <div class="field" style="margin-bottom:10px;max-width:240px">
+      <label>Ticket de venta ($)</label>
+      <input type="number" id="esc-tkt" class="mono" value="50000" oninput="rcEsc()">
+    </div>
+    <div class="calc-dual">
+      <div class="calc-col cc-deb">
+        <div class="col-ttl">💳 Débito</div>
+        <div class="cr"><span class="lb">Ticket</span><span class="vl" id="esc-d-t">—</span></div>
+        <div class="cr neg"><span class="lb">Comisión</span><span class="vl" id="esc-d-c">—</span></div>
+        <div class="cr neg"><span class="lb">IVA 19%</span><span class="vl" id="esc-d-i">—</span></div>
+        <div class="res-row">
+          <div class="chip chip-r"><div class="cl">Costo</div><div class="cv" id="esc-d-tot">—</div></div>
+          <div class="chip chip-g"><div class="cl">Recibe</div><div class="cv" id="esc-d-liq">—</div></div>
+        </div>
+      </div>
+      <div class="calc-col cc-cre">
+        <div class="col-ttl">💳 Crédito</div>
+        <div class="cr"><span class="lb">Ticket</span><span class="vl" id="esc-c-t">—</span></div>
+        <div class="cr neg"><span class="lb">Comisión</span><span class="vl" id="esc-c-c">—</span></div>
+        <div class="cr neg"><span class="lb">IVA 19%</span><span class="vl" id="esc-c-i">—</span></div>
+        <div class="res-row">
+          <div class="chip chip-r"><div class="cl">Costo</div><div class="cv" id="esc-c-tot">—</div></div>
+          <div class="chip chip-g"><div class="cl">Recibe</div><div class="cv" id="esc-c-liq">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Boleta electrónica -->
+  <div class="card a-grn">
+    <div class="toggle-row">
+      <div>
+        <div class="ti-title">Incluir Boleta Electrónica en el email</div>
+        <div class="ti-sub" id="bolHelp">Se mostrará la sección de boleta al cliente</div>
+      </div>
+      <div class="tog on" id="bolToggle" onclick="toggleBol()"><div class="tog-thumb"></div></div>
+    </div>
+    <div id="bolContenido">
+      <div class="tag tag-yel">🎁 6 meses gratis para usuarios nuevos</div>
+      <div class="g2">
+        <div class="field">
+          <label>Meses gratis ofrecidos</label>
+          <select id="esc-mesesBol" onchange="rcEsc()">
+            <option value="6" selected>6 meses (nuevos usuarios)</option>
+            <option value="3">3 meses</option>
+            <option value="1">1 mes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Precio post-promo</label>
+          <div style="padding:10px 11px;border:1.5px solid var(--g15);border-radius:var(--rsm);background:var(--g04);display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700">$13.090</span>
+            <span style="font-size:10px;color:var(--g60)">IVA inc. / mes</span>
+          </div>
+        </div>
+      </div>
+      <div class="stat-box grn">
+        <div>
+          <div class="stat-lbl">Ahorro durante la promo</div>
+          <div class="stat-val" id="esc-ahorro">$78.540</div>
+          <div class="stat-sub" id="esc-detallePro">6 meses × $13.090 = $0</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:10px;color:var(--g60);margin-bottom:2px">Desde el mes <span id="esc-mesPago">7</span></div>
+          <div style="font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace">$13.090/mes</div>
+          <div style="font-size:10px;color:var(--g60)">IVA incluido</div>
+        </div>
+      </div>
+      <div class="info-box"><strong>Incluye:</strong> Emisión ilimitada de boletas electrónicas · Integrado con Point Smart 2 · Compatible con SII</div>
+    </div>
+  </div>
+
+</div><!-- /panel-escala -->
+
+<!-- ACCIONES -->
+<div class="actions-card">
+  <div class="actions-title">Listo para enviar</div>
+  <div class="actions-grid">
+    <button class="abtn-base ab-copy" onclick="copyEmail()">📋 Copiar propuesta y abrir Gmail</button>
+    <button class="abtn-base ab-prev" onclick="abrirPreview()">👁 Vista previa</button>
+    <button class="abtn-base ab-cal" onclick="abrirCal()">📅 Agendar reunión</button>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- MODAL PREVIEW -->
+<div class="ov" id="ov">
+  <div class="mdl">
+    <div class="mh"><h2 id="ov-title">Vista previa</h2><button class="mcl" onclick="g('ov').classList.remove('open')">✕</button></div>
+    <div class="tabs">
+      <button class="tab act" onclick="swT('pv',this)">Vista previa</button>
+      <button class="tab" onclick="swT('cd',this)">HTML</button>
+    </div>
+    <div class="tc act" id="tc-pv"><iframe class="ep" id="ef" srcdoc=""></iframe></div>
+    <div class="tc" id="tc-cd"><div class="cbox" id="cb2"></div></div>
+    <div class="arow">
+      <button class="mbtn" onclick="cpHTML()">📋 Copiar HTML</button>
+      <button class="mbtn" onclick="dlHTML()">💾 Descargar</button>
+      <button class="mbtn p" onclick="cpTxt()">📄 Texto plano</button>
+      <button class="mbtn p" onclick="copyEmail();g('ov').classList.remove('open')">✉️ Copiar y Gmail</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CALENDARIO -->
+<div class="cov" id="cov">
+  <div class="cmdl">
+    <h2>📅 Agendar reunión</h2>
+    <div class="field"><label>Título</label><input type="text" id="calT"></div>
+    <div class="g2">
+      <div class="field"><label>Fecha</label><input type="date" id="calF"></div>
+      <div class="field"><label>Hora</label><input type="time" id="calH" value="10:00"></div>
+    </div>
+    <div class="field"><label>Duración</label>
+      <select id="calD">
+        <option value="15">15 minutos</option>
+        <option value="30" selected>30 minutos</option>
+        <option value="60">1 hora</option>
+      </select>
+    </div>
+    <div class="field"><label>Notas</label><input type="text" id="calN"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="abtn-base ab-prev" style="flex:1;border:none!important" onclick="abrirGoogleCal()">Abrir Google Calendar</button>
+      <button class="btn-ghost" style="width:auto;margin-top:0;padding:12px 14px" onclick="g('cov').classList.remove('open')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE -->
+<div class="dov" id="dov">
+  <div class="dmdl">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <h2 style="font-size:15px;font-weight:700;color:var(--navy);margin:0">Detalle de propuesta</h2>
+      <button onclick="g('dov').classList.remove('open')" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--g15);background:none;cursor:pointer;font-size:14px;color:var(--g60)">✕</button>
+    </div>
+    <div id="detalleBody"></div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button id="btnRespondido" onclick="marcarEstado('respondido')" style="flex:1;padding:10px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">✅ Respondido</button>
+      <button id="btnNoResponde" onclick="marcarEstado('no_responde')" style="flex:1;padding:10px;background:var(--g04);color:var(--red);border:1.5px solid var(--red);border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">📵 No responde</button>
+    </div>
+    <button onclick="reenviarEmail()" style="width:100%;margin-top:8px;padding:10px;background:var(--mp);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">✉️ Reenviar seguimiento</button>
+  </div>
+</div>
+
+<div class="tst" id="tst"></div>
+
+<script>
+/* ════════════════════════════════════════
+   ESTADO
+════════════════════════════════════════ */
+let tipoActual  = 'pro';
+let salActual   = 'conv';
+let inclBol     = true;
+let acredActual = 'D0';
+let filtroActual = 'todos';
+let detalleIdx   = null;
+
+// Tablas de tramos y cuotas MP Pro
+const TQ = { 3:1.99, 6:3.49, 9:4.99, 12:6.99 };
+const TR = [
+  { id:1, min:0,        max:5000000,  fd:89, pd:0.74, fc:99, pc:1.99 },
+  { id:2, min:5000000,  max:15000000, fd:84, pd:0.74, fc:99, pc:1.89 },
+  { id:3, min:15000000, max:30000000, fd:79, pd:0.69, fc:94, pc:1.84 },
+  { id:4, min:30000000, max:Infinity, fd:74, pd:0.69, fc:89, pc:1.79 },
+];
+
+// Escalas Pricing
+const ESCALAS = [
+  { id:'N1', min:0,        max:2000000,  d0_td:2.19, d0_tc:2.69, d10_td:2.05, d10_tc:2.55 },
+  { id:'N2', min:2000000,  max:4000000,  d0_td:1.99, d0_tc:2.59, d10_td:1.85, d10_tc:2.45 },
+  { id:'N3', min:4000000,  max:8000000,  d0_td:1.79, d0_tc:2.49, d10_td:1.65, d10_tc:2.35 },
+  { id:'N4', min:8000000,  max:25000000, d0_td:1.59, d0_tc:2.39, d10_td:1.45, d10_tc:2.25 },
+  { id:'N5', min:25000000, max:Infinity, d0_td:1.45, d0_tc:2.25, d10_td:1.35, d10_tc:2.15 },
+];
+
+/* ════════════════════════════════════════
+   UTILS
+════════════════════════════════════════ */
+const g   = id => document.getElementById(id);
+const clp = n  => '$\u00a0' + Math.round(n).toLocaleString('es-CL');
+function toast(m) {
+  const t = g('tst');
+  t.textContent = m;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ════════════════════════════════════════
+   PASO 1 — SALUDO / STEP BAR
+════════════════════════════════════════ */
+function setSal(val, el) {
+  salActual = val;
+  ['conv','vis','ref'].forEach(k => g('sal-'+k).classList.remove('sel'));
+  el.classList.add('sel');
+  g('ubiF').style.display = val === 'vis' ? 'block' : 'none';
+}
+
+function syncStepBar() {
+  const ok = g('cli').value.trim() && g('neg').value.trim();
+  g('step-1').className = 'step-item' + (ok ? ' done' : ' active');
+  g('step-2').className = 'step-item' + (ok ? ' active' : '');
+}
+
+/* ════════════════════════════════════════
+   PASO 2 — TIPO DE PROPUESTA
+════════════════════════════════════════ */
+function setTipo(tipo) {
+  tipoActual = tipo;
+  // Tarjetas visuales
+  g('tipo-pro').classList.toggle('sel', tipo === 'pro');
+  g('tipo-escala').classList.toggle('sel', tipo === 'escala');
+  // Paneles
+  g('panel-pro').classList.toggle('active', tipo === 'pro');
+  g('panel-escala').classList.toggle('active', tipo === 'escala');
+  // Step bar
+  g('step-2').classList.add('done');
+  g('step-3').className = 'step-item active';
+  // Re-sync cálculos
+  if (tipo === 'pro') rcPro(); else rcEsc();
+}
+
+/* ════════════════════════════════════════
+   MP PRO — CÁLCULO
+   rcPro()       → disparado por TPV o ticket o cuotas
+   rcProManual() → disparado por edición manual de tasas
+                   (limpia TPV para no sobreescribir)
+════════════════════════════════════════ */
+function rcPro() {
+  const tpv = Number(g('pro-tpv').value) || 0;
+  const tk  = Number(g('pro-tkt').value) || 0;
+  const cq  = parseInt(g('pro-cuotas').value) || 6;
+  const tq  = TQ[cq];
+
+  let fd, pd, fc, pc;
+
+  if (tpv > 0) {
+    // Autocompletar desde tramo
+    const tramo = TR.find(t => tpv >= t.min && tpv < t.max) || TR[3];
+    fd = tramo.fd; pd = tramo.pd;
+    fc = tramo.fc; pc = tramo.pc;
+    // Escribir en los inputs sin disparar oninput (usamos solo .value)
+    g('pro-fjD').value = fd;
+    g('pro-prD').value = pd.toFixed(2);
+    g('pro-fjC').value = fc;
+    g('pro-prC').value = pc.toFixed(2);
+    // Badge y tabla
+    const bg = g('pro-tbg');
+    [1,2,3,4].forEach(i => g('pro-tr'+i).classList.remove('at'));
+    bg.className = 'nbadge nb-' + tramo.id;
+    bg.textContent = '✓ Tramo ' + tramo.id + ' — $' + (tpv/1e6).toLocaleString('es-CL',{maximumFractionDigits:1}) + 'M/mes';
+    g('pro-tr'+tramo.id).classList.add('at');
+  } else {
+    // Leer desde campos manuales
+    fd = Math.round(Number(g('pro-fjD').value) || 0);
+    pd = Number(g('pro-prD').value) || 0;
+    fc = Math.round(Number(g('pro-fjC').value) || 0);
+    pc = Number(g('pro-prC').value) || 0;
+    const bg = g('pro-tbg');
+    [1,2,3,4].forEach(i => g('pro-tr'+i).classList.remove('at'));
+    bg.className = 'nbadge nb-emp';
+    bg.textContent = '⬆ Ingresá el TPV para ver el tramo';
+  }
+
+  // ① Débito contado
+  const dComF = fd;
+  const dComP = Math.round((pd/100) * tk);
+  const dCom  = dComF + dComP;
+  const dIva  = Math.round(dCom * 0.19);
+  const dTot  = dCom + dIva;
+  const dLiq  = Math.round(tk - dTot);
+
+  // ① Crédito contado
+  const cComF = fc;
+  const cComP = Math.round((pc/100) * tk);
+  const cIva  = Math.round((cComF + cComP) * 0.19);
+  const cTot  = cComF + cComP + cIva;
+  const cLiq  = Math.round(tk - cTot);
+
+  // ② Cuotas — ticket independiente
+  const tkQ   = Number(g('pro-tktQ').value) || 0;
+  const qComF = fc;
+  const qComP = Math.round((pc/100) * tkQ);
+  const qComQ = Math.round((tq/100) * tkQ);
+  const qSub  = qComF + qComP + qComQ;
+  const qIva  = Math.round(qSub * 0.19);
+  const qTot  = qSub + qIva;
+  const qLiq  = Math.round(tkQ - qTot);
+
+  // DOM ① débito
+  g('pro-d-t').textContent   = clp(tk);
+  g('pro-d-f').textContent   = '− ' + clp(dComF);
+  g('pro-d-p').textContent   = '− ' + clp(dComP);
+  g('pro-d-i').textContent   = '− ' + clp(dIva);
+  g('pro-d-tot').textContent = clp(dTot);
+  g('pro-d-liq').textContent = clp(dLiq);
+
+  // DOM ① crédito
+  g('pro-c-t').textContent   = clp(tk);
+  g('pro-c-f').textContent   = '− ' + clp(cComF);
+  g('pro-c-p').textContent   = '− ' + clp(cComP);
+  g('pro-c-i').textContent   = '− ' + clp(cIva);
+  g('pro-c-tot').textContent = clp(cTot);
+  g('pro-c-liq').textContent = clp(cLiq);
+
+  // DOM ② cuotas
+  g('pro-prQ').value         = tq.toFixed(2);
+  g('pro-q-t').textContent   = clp(tkQ);
+  g('pro-q-f').textContent   = '− ' + clp(qComF);
+  g('pro-q-p').textContent   = '− ' + clp(qComP);
+  g('pro-q-q').textContent   = '− ' + clp(qComQ);
+  g('pro-q-i').textContent   = '− ' + clp(qIva);
+  g('pro-q-tot').textContent = clp(qTot);
+  g('pro-q-liq').textContent = clp(qLiq);
+}
+
+function rcProManual() {
+  // El ejecutivo está editando las tasas a mano:
+  // vaciamos el TPV para que rcPro() lea desde los campos manuales
+  g('pro-tpv').value = '';
+  rcPro();
+}
+
+/* ════════════════════════════════════════
+   PRICING ESCALA — CÁLCULO
+════════════════════════════════════════ */
+function setAcred(val, el) {
+  acredActual = val;
+  g('acred-d0').classList.remove('sel','sel-grn');
+  g('acred-d10').classList.remove('sel','sel-grn');
+  el.classList.add('sel');
+  if (val === 'D0') {
+    el.classList.add('sel-grn');
+    g('acredHelp').textContent = 'D0: disponible de inmediato en la cuenta';
+    g('acredHelp').style.color = 'var(--green)';
+  } else {
+    g('acredHelp').textContent = 'D10: acreditación a los 10 días hábiles — tasa más baja';
+    g('acredHelp').style.color = 'var(--mpd)';
+  }
+  rcEsc();
+}
+
+function rcEsc() {
+  const tpv  = Number(g('esc-tpv').value) || 0;
+  const tk   = Number(g('esc-tkt').value) || 0;
+  const qty  = parseInt(g('esc-qty').value) || 1;
+  const meses = parseInt(g('esc-mesesBol').value) || 6;
+
+  // Terminal
+  g('esc-totalEq').textContent   = clp(qty * 59900);
+  g('esc-detalleEq').textContent = qty + ' terminal' + (qty>1?'es':'') + ' × $59.900';
+
+  // Boleta
+  g('esc-ahorro').textContent    = clp(meses * 13090);
+  g('esc-detallePro').textContent = meses + ' meses × $13.090 = $0 durante la promo';
+  g('esc-mesPago').textContent   = meses + 1;
+
+  // Nivel
+  ['N1','N2','N3','N4','N5'].forEach(id => { const tr=g('esc'+id); if(tr) tr.classList.remove('at'); });
+  let prD = Number(g('esc-prD').value) || 0;
+  let prC = Number(g('esc-prC').value) || 0;
+
+  if (tpv > 0) {
+    const nivel = ESCALAS.find(n => tpv >= n.min && tpv < n.max) || ESCALAS[4];
+    prD = acredActual === 'D0' ? nivel.d0_td : nivel.d10_td;
+    prC = acredActual === 'D0' ? nivel.d0_tc : nivel.d10_tc;
+    g('esc-prD').value = prD.toFixed(2);
+    g('esc-prC').value = prC.toFixed(2);
+    const nm = ['','nb-1','nb-2','nb-3','nb-4','nb-5'];
+    const idx = parseInt(nivel.id.replace('N',''));
+    const bg = g('esc-badge');
+    bg.className = 'nbadge ' + nm[idx];
+    bg.textContent = '✓ ' + nivel.id + ' · $' + (tpv/1e6).toLocaleString('es-CL',{maximumFractionDigits:1}) + 'M/mes';
+    const tr = g('esc'+nivel.id);
+    if (tr) tr.classList.add('at');
+  } else {
+    const bg = g('esc-badge');
+    bg.className = 'nbadge nb-emp';
+    bg.textContent = '↑ Ingresa el TPV para ver el nivel';
+  }
+
+  // Simulación
+  const dCom = Math.round((prD/100)*tk);
+  const dIva = Math.round(dCom*0.19);
+  const dTot = dCom + dIva;
+  const dLiq = Math.round(tk - dTot);
+  const cCom = Math.round((prC/100)*tk);
+  const cIva = Math.round(cCom*0.19);
+  const cTot = cCom + cIva;
+  const cLiq = Math.round(tk - cTot);
+
+  g('esc-d-t').textContent   = clp(tk);
+  g('esc-d-c').textContent   = '− '+clp(dCom);
+  g('esc-d-i').textContent   = '− '+clp(dIva);
+  g('esc-d-tot').textContent = clp(dTot);
+  g('esc-d-liq').textContent = clp(dLiq);
+  g('esc-c-t').textContent   = clp(tk);
+  g('esc-c-c').textContent   = '− '+clp(cCom);
+  g('esc-c-i').textContent   = '− '+clp(cIva);
+  g('esc-c-tot').textContent = clp(cTot);
+  g('esc-c-liq').textContent = clp(cLiq);
+}
+
+/* ════════════════════════════════════════
+   BOLETA TOGGLE
+════════════════════════════════════════ */
+function toggleBol() {
+  inclBol = !inclBol;
+  g('bolToggle').classList.toggle('on', inclBol);
+  g('bolHelp').textContent = inclBol ? 'Se mostrará la sección de boleta al cliente' : 'No se incluirá en el correo';
+  g('bolContenido').style.display = inclBol ? 'block' : 'none';
+}
+
+/* ════════════════════════════════════════
+   RECOLECTAR DATOS
+════════════════════════════════════════ */
+function gData() {
+  const base = {
+    cli:   g('cli').value  || 'Cliente',
+    neg:   g('neg').value  || 'tu negocio',
+    emc:   g('emc').value  || '',
+    rub:   g('rub').value  || '',
+    ubi:   g('ubi').value  || '',
+    ejec:  g('ejec').value || '[Ejecutivo]',
+    tel:   g('tel').value  || '[Teléfono]',
+    notas: g('notas').value|| '',
+    sal:   salActual,
+    tipo:  tipoActual,
+  };
+
+  if (tipoActual === 'pro') {
+    const tpv = Number(g('pro-tpv').value) || 0;
+    const tk  = Number(g('pro-tkt').value) || 0;
+    const cq  = parseInt(g('pro-cuotas').value) || 6;
+    const tq  = TQ[cq];
+    let fd, pd, fc, pc;
+    if (tpv > 0) {
+      const tramo = TR.find(t => tpv >= t.min && tpv < t.max) || TR[3];
+      fd=tramo.fd; pd=tramo.pd; fc=tramo.fc; pc=tramo.pc;
+    } else {
+      fd=Math.round(Number(g('pro-fjD').value)||0);
+      pd=Number(g('pro-prD').value)||0;
+      fc=Math.round(Number(g('pro-fjC').value)||0);
+      pc=Number(g('pro-prC').value)||0;
+    }
+    const dComF = fd, dComP = Math.round((pd/100)*tk);
+    const dIva  = Math.round((dComF+dComP)*0.19);
+    const dTot  = dComF+dComP+dIva, dLiq = Math.round(tk-dTot);
+    const cComF = fc, cComP = Math.round((pc/100)*tk);
+    const cIva  = Math.round((cComF+cComP)*0.19);
+    const cTot  = cComF+cComP+cIva, cLiq = Math.round(tk-cTot);
+    const tkQ   = Number(g('pro-tktQ').value) || 0;
+    const qComQ = Math.round((tq/100)*tkQ);
+    const qSub  = fc+Math.round((pc/100)*tkQ)+qComQ;
+    const qIva  = Math.round(qSub*0.19);
+    const qTot  = qSub+qIva, qLiq = Math.round(tkQ-qTot);
+    const fi = n => Math.round(n).toLocaleString('es-CL');
+    const fml = '($'+fc+') + ('+pc.toFixed(2)+'%) + ('+tq.toFixed(2)+'%) + IVA = $'+fi(qTot);
+    return { ...base,
+      tpv: tpv.toLocaleString('es-CL'),
+      fjD:fd, prD:pd.toFixed(2)+'%', fjC:fc, prC:pc.toFixed(2)+'%',
+      cqN:cq+'x', tkt:tk.toLocaleString('es-CL'), tktQ:tkQ.toLocaleString('es-CL'), fml,
+      dComF:fi(dComF), dComP:fi(dComP), dIva:fi(dIva), dLiq:fi(dLiq),
+      cComF:fi(cComF), cComP:fi(cComP), cIva:fi(cIva), cLiq:fi(cLiq),
+      qLiq:fi(qLiq), qTot:fi(qTot),
+    };
+  } else {
+    const tpv  = Number(g('esc-tpv').value)||0;
+    const tk   = Number(g('esc-tkt').value)||0;
+    const qty  = parseInt(g('esc-qty').value)||1;
+    const meses = parseInt(g('esc-mesesBol').value)||6;
+    let prD = Number(g('esc-prD').value)||0;
+    let prC = Number(g('esc-prC').value)||0;
+    if (tpv > 0) {
+      const n = ESCALAS.find(n => tpv>=n.min && tpv<n.max)||ESCALAS[4];
+      prD = acredActual==='D0'?n.d0_td:n.d10_td;
+      prC = acredActual==='D0'?n.d0_tc:n.d10_tc;
+    }
+    const dCom=Math.round((prD/100)*tk),dIva=Math.round(dCom*0.19),dTot=dCom+dIva,dLiq=Math.round(tk-dTot);
+    const cCom=Math.round((prC/100)*tk),cIva=Math.round(cCom*0.19),cTot=cCom+cIva,cLiq=Math.round(tk-cTot);
+    const fi = n => Math.round(n).toLocaleString('es-CL');
+    return { ...base,
+      qty, precioUnit:(59900).toLocaleString('es-CL'), totalEq:(qty*59900).toLocaleString('es-CL'),
+      acred:acredActual,
+      acredLabel:acredActual==='D0'?'D0 — acreditación al instante':'D10 — acreditación a los 10 días hábiles',
+      acredCorto:acredActual==='D0'?'al instante':'a los 10 días hábiles',
+      acredBenef:acredActual==='D0'
+        ?'<strong>Abono instantáneo:</strong> cada venta se acredita <strong>al instante</strong> en tu cuenta de Mercado Pago.'
+        :'<strong>Acreditación D10:</strong> las ventas se acreditan a los <strong>10 días hábiles</strong>, con tasa preferencial más baja.',
+      prD:prD.toFixed(2)+'%', prC:prC.toFixed(2)+'%',
+      tk:tk.toLocaleString('es-CL'),
+      dCom:fi(dCom),dIva:fi(dIva),dLiq:fi(dLiq),
+      cCom:fi(cCom),cIva:fi(cIva),cLiq:fi(cLiq),
+      mesesBol:String(meses), mesPago:meses+1,
+      ahorro:(meses*13090).toLocaleString('es-CL'), inclBol,
+    };
+  }
+}
+
+/* ════════════════════════════════════════
+   SALUDO TEXT
+════════════════════════════════════════ */
+function salTxt(d) {
+  const ubi = d.ubi ? ' ' + d.ubi + ' y,' : '';
+  if (d.tipo === 'pro') {
+    if (d.sal==='conv') return 'Cómo conversamos y tras analizar la operación actual de';
+    if (d.sal==='vis')  return 'Hoy pasé por'+ubi+' tras analizar la operación actual de';
+    return 'Me comunico a través de un referido y, tras analizar la operación de';
+  } else {
+    if (d.sal==='conv') return 'Como conversamos y luego de analizar las necesidades de';
+    if (d.sal==='vis')  return 'Hoy pasé por'+ubi+' tras conocer la operación de';
+    return 'Me comunico a través de un referido y, luego de conocer el negocio de';
+  }
+}
+
+/* ════════════════════════════════════════
+   COPY EMAIL
+════════════════════════════════════════ */
+function validar() {
+  if (!g('cli').value.trim() || !g('neg').value.trim()) {
+    toast('⚠️ Completá nombre del contacto y del negocio'); return false;
+  }
+  return true;
+}
+
+function copyEmail() {
+  if (!validar()) return;
+  const d = gData();
+  const html = tipoActual === 'pro' ? bldHTMLPro(d) : bldHTMLEsc(d);
+  const sub  = tipoActual === 'pro'
+    ? 'Propuesta Mercado Pago Pro — ' + d.neg
+    : 'Propuesta Mercado Pago Chile — ' + d.neg;
+  const doOpen = () => {
+    window.open('https://mail.google.com/mail/?view=cm&to='+encodeURIComponent(d.emc)+'&su='+encodeURIComponent(sub),'_blank');
+    toast('✅ Copiado — pegá con Ctrl+V en Gmail');
+    registrarEnvio(d);
+  };
+  if (typeof ClipboardItem!=='undefined' && navigator.clipboard?.write) {
+    navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'})})]).then(doOpen).catch(()=>iframeCopy(html,doOpen));
+  } else { iframeCopy(html,doOpen); }
+}
+
+function iframeCopy(src, cb) {
+  const ifr = document.createElement('iframe');
+  ifr.style.cssText='position:fixed;top:-9999px;left:-9999px;width:800px;height:600px;opacity:0;border:none;pointer-events:none';
+  document.body.appendChild(ifr);
+  const doc = ifr.contentDocument||ifr.contentWindow.document;
+  doc.open(); doc.write(src); doc.close();
+  setTimeout(()=>{
+    try{const sel=ifr.contentWindow.getSelection();const r=doc.createRange();r.selectNodeContents(doc.body);sel.removeAllRanges();sel.addRange(r);doc.execCommand('copy');sel.removeAllRanges();}catch(e){}
+    document.body.removeChild(ifr); if(cb) cb();
+  },200);
+}
+
+/* ════════════════════════════════════════
+   PREVIEW / DOWNLOAD / TXT
+════════════════════════════════════════ */
+function abrirPreview() {
+  if (!validar()) return;
+  const d = gData();
+  const h = tipoActual==='pro' ? bldHTMLPro(d) : bldHTMLEsc(d);
+  g('ov-title').textContent = tipoActual==='pro' ? 'Vista previa — MP Pro' : 'Vista previa — Pricing por Escala';
+  g('ef').srcdoc=h; g('cb2').textContent=h;
+  g('ov').classList.add('open');
+}
+function swT(n,btn){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('act'));document.querySelectorAll('.tc').forEach(c=>c.classList.remove('act'));btn.classList.add('act');g('tc-'+n).classList.add('act')}
+function cpHTML(){navigator.clipboard.writeText(g('cb2').textContent).then(()=>toast('✅ HTML copiado'))}
+function dlHTML(){const d=gData();const h=tipoActual==='pro'?bldHTMLPro(d):bldHTMLEsc(d);const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download='propuesta-mp-'+d.neg.replace(/\s+/g,'-').toLowerCase()+'.html';a.click();toast('📥 Descargado')}
+function cpTxt(){
+  const d=gData();
+  let t = tipoActual==='pro'
+    ? `Buenas tardes, ${d.cli}.\n\n${salTxt(d)} ${d.neg}, he diseñado una propuesta de Mercado Pago Pro.\n\n1. Suscripción $15.500 + IVA / mes\n   Incluye: Smart POS 2, Boletas Electrónicas (efectivo incluido), soporte prioritario, garantía de por vida y ejecutivo de cartera.\n2. Tasas: Débito $${d.fjD}+(${d.prD}) · Crédito $${d.fjC}+(${d.prC})\n   Ticket $${d.tkt} → Déb recibe $${d.dLiq} · Cre recibe $${d.cLiq}\n   Liquidez inmediata: cada venta se acredita al instante sin importar el método de pago — sin esperas, sin plazos.\n3. Cuotas ${d.cqN}: ${d.fml}\n   Ticket $${d.tktQ} → recibís $${d.qLiq} al instante\n\n${d.notas?'Notas: '+d.notas+'\n\n':''}${d.ejec} · ${d.tel}`
+    : `Buenas tardes, ${d.cli}.\n\n${salTxt(d)} ${d.neg}, te presento nuestra propuesta de Mercado Pago Chile.\n\n1. Point Smart 2 — ${d.qty} terminal${d.qty>1?'es':''} · $${d.precioUnit} · Total $${d.totalEq}\n   Acreditación: ${d.acredLabel}\n2. Tasas: Débito ${d.prD} → recibís $${d.dLiq} · Crédito ${d.prC} → recibís $${d.cLiq}\n${d.inclBol?`3. Boleta Electrónica — ${d.mesesBol} meses gratis · ahorro $${d.ahorro}\n   Desde mes ${d.mesPago}: $13.090 IVA inc./mes\n`:''}${d.notas?'\nNotas: '+d.notas+'\n':''}${d.ejec} · ${d.tel}`;
+  navigator.clipboard.writeText(t).then(()=>toast('📄 Texto copiado'));
+}
+
+/* ════════════════════════════════════════
+   CALENDARIO
+════════════════════════════════════════ */
+function abrirCal() {
+  const neg = g('neg').value||'el cliente';
+  const cli = g('cli').value||'';
+  g('calT').value = 'Reunión Mercado Pago — '+neg;
+  g('calN').value = 'Revisión propuesta '+(tipoActual==='pro'?'MP Pro':'Pricing por Escala')+' para '+neg+(cli?'. Contacto: '+cli:'');
+  const m=new Date(); m.setDate(m.getDate()+1);
+  g('calF').value=m.toISOString().split('T')[0];
+  g('cov').classList.add('open');
+}
+function abrirGoogleCal(){
+  const tit=g('calT').value.trim(),fec=g('calF').value,hor=g('calH').value;
+  const dur=parseInt(g('calD').value),des=g('calN').value;
+  if(!tit||!fec||!hor){toast('⚠️ Completá título, fecha y hora');return}
+  const ini=new Date(fec+'T'+hor+':00'),fin=new Date(ini.getTime()+dur*60000);
+  const fmt=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+  window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(tit)+'&dates='+fmt(ini)+'/'+fmt(fin)+'&details='+encodeURIComponent(des),'_blank');
+  g('cov').classList.remove('open'); toast('📅 Google Calendar abierto');
+}
+
+/* ════════════════════════════════════════
+   TRACKING
+════════════════════════════════════════ */
+function getHist(){try{return JSON.parse(localStorage.getItem('mp_prop')||'[]')}catch(e){return[]}}
+function setHist(h){try{localStorage.setItem('mp_prop',JSON.stringify(h))}catch(e){}}
+
+function registrarEnvio(d) {
+  const hist=getHist();
+  const extra = d.tipo==='pro'
+    ? 'MP Pro · Déb $'+d.fjD+'+('+d.prD+') · Cre $'+d.fjC+'+('+d.prC+')'
+    : 'Escala · Déb '+d.prD+' Cre '+d.prC+' · '+d.acred+(d.inclBol?' +Boleta':'');
+  hist.unshift({id:Date.now(),fecha:new Date().toISOString(),cliente:d.cli,negocio:d.neg,email:d.emc,rub:d.rub||'—',notas:d.notas||'',tipo:d.tipo,extra,estado:'pendiente'});
+  if(hist.length>100) hist.pop();
+  setHist(hist); renderHist();
+}
+
+function badgeInfo(h) {
+  if(h.estado==='respondido')  return {label:'✅ Respondido', bg:'#E6F7EE',color:'#2E7D32'};
+  if(h.estado==='no_responde') return {label:'📵 No responde',bg:'#FDEAEA',color:'#C62828'};
+  const fu=new Date(h.fecha); fu.setDate(fu.getDate()+2);
+  const diff=Math.ceil((fu-new Date())/86400000);
+  if(diff<0)  return {label:'🔴 Vencido',       bg:'#FDEAEA',color:'#C62828',tipo:'vencido'};
+  if(diff===0) return {label:'🟡 Seguir HOY',   bg:'#FFFDE7',color:'#856400',tipo:'hoy'};
+  if(diff===1) return {label:'🟠 Seguir mañana',bg:'#FFF3E0',color:'#E65100',tipo:'manana'};
+  return {label:'🟢 Al día · '+fu.toLocaleDateString('es-CL'),bg:'#E6F7EE',color:'#2E7D32',tipo:'ok'};
+}
+
+function setFiltro(f,btn){
+  filtroActual=f;
+  document.querySelectorAll('#filtrosBtns .fb').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel'); renderHist();
+}
+
+function renderHist() {
+  const hist=getHist();
+  const banner=g('trackingBanner');
+  if(!hist.length){banner.classList.remove('visible');return}
+  banner.classList.add('visible');
+  let pend=0,venc=0,resp=0;
+  hist.forEach(h=>{
+    if(h.estado==='respondido'||h.estado==='no_responde'){resp++;return}
+    badgeInfo(h).tipo==='vencido'?venc++:pend++;
+  });
+  g('trackingStats').innerHTML=`<span>${hist.length} envíos</span> · <span>${pend} pendientes</span> · <span class="${venc>0?'red':''}">${venc} vencidos</span> · <span>${resp} respondidos</span>`;
+  const filtrados=hist.filter(h=>{
+    if(filtroActual==='todos') return true;
+    if(filtroActual==='respondido') return h.estado==='respondido'||h.estado==='no_responde';
+    return badgeInfo(h).tipo===filtroActual;
+  });
+  const list=g('histList');
+  if(!filtrados.length){list.innerHTML='<div style="text-align:center;padding:14px;color:var(--g40);font-size:12px">Sin resultados en este filtro</div>';return}
+  list.innerHTML=filtrados.map(h=>{
+    const ri=hist.findIndex(x=>x.id===h.id);
+    const b=badgeInfo(h);
+    const f=new Date(h.fecha);
+    const tl=h.tipo==='pro'?'💳 MP Pro':'📊 Escala';
+    return `<div class="hi" onclick="abrirDetalle(${ri})">
+      <div style="flex:1;min-width:0">
+        <div class="hi-name">${h.cliente} <span>· ${h.negocio}</span> <span style="font-size:10px;background:var(--mpl);color:var(--mpd);padding:2px 7px;border-radius:99px;font-weight:700">${tl}</span></div>
+        <div class="hi-meta">${h.email||'sin email'} · ${f.toLocaleDateString('es-CL')} ${f.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'})}</div>
+        <div class="hi-meta">${h.extra}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
+        <span class="hi-badge" style="background:${b.bg};color:${b.color}">${b.label}</span>
+        <span style="font-size:10px;color:var(--mp);font-weight:600">Ver →</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function abrirDetalle(idx) {
+  detalleIdx=idx;
+  const h=getHist()[idx];
+  const b=badgeInfo(h);
+  const fu=new Date(h.fecha); fu.setDate(fu.getDate()+2);
+  g('detalleBody').innerHTML=`
+    <div style="background:${b.bg};border-radius:8px;padding:8px 14px;margin-bottom:12px;text-align:center"><span style="color:${b.color};font-size:13px;font-weight:700">${b.label}</span></div>
+    <table style="width:100%;font-size:13px;border-collapse:collapse">
+      <tr><td style="padding:5px 0;color:var(--g60);width:40%">Cliente</td><td style="padding:5px 0;font-weight:600">${h.cliente}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--g60)">Negocio</td><td style="padding:5px 0;font-weight:600">${h.negocio}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--g60)">Email</td><td style="padding:5px 0;color:var(--mp)">${h.email||'—'}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--g60)">Tipo</td><td style="padding:5px 0">${h.tipo==='pro'?'💳 MP Pro':'📊 Pricing por Escala'}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--g60)">Condiciones</td><td style="padding:5px 0;font-size:12px">${h.extra}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--g60)">Enviado</td><td style="padding:5px 0">${new Date(h.fecha).toLocaleString('es-CL')}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--g60)">Follow-up</td><td style="padding:5px 0;font-weight:700;color:${b.color}">${fu.toLocaleDateString('es-CL')}</td></tr>
+      ${h.notas?`<tr><td style="padding:5px 0;color:var(--g60);vertical-align:top">Notas</td><td style="padding:5px 0;color:var(--g60);font-style:italic">${h.notas}</td></tr>`:''}
+    </table>`;
+  const btnR=g('btnRespondido'),btnN=g('btnNoResponde');
+  btnR.disabled=h.estado==='respondido'; btnR.style.opacity=h.estado==='respondido'?'.45':'1';
+  btnN.disabled=h.estado==='no_responde'; btnN.style.opacity=h.estado==='no_responde'?'.45':'1';
+  g('dov').classList.add('open');
+}
+function marcarEstado(estado){
+  if(detalleIdx===null)return;
+  const hist=getHist(); hist[detalleIdx].estado=estado; setHist(hist);
+  g('dov').classList.remove('open'); renderHist();
+  toast(estado==='respondido'?'✅ Marcado como respondido':'📵 Marcado como no responde');
+}
+function reenviarEmail(){
+  if(detalleIdx===null)return;
+  const h=getHist()[detalleIdx];
+  const sub=encodeURIComponent('Seguimiento — Propuesta Mercado Pago');
+  const body=encodeURIComponent(`Hola ${h.cliente},\n\nQuería hacer un seguimiento de la propuesta que te envié para ${h.negocio}.\n\n¿Tuviste la oportunidad de revisarla? Quedo disponible para resolver cualquier duda o agendar 15 minutos.\n\nSaludos`);
+  window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(h.email)}&su=${sub}&body=${body}`,'_blank');
+  g('dov').classList.remove('open'); toast('✉️ Gmail abierto');
+}
+function exportarCSV(){
+  const hist=getHist();
+  if(!hist.length){toast('⚠️ Sin datos');return}
+  const hdr=['Fecha','Cliente','Negocio','Email','Rubro','Tipo','Condiciones','Estado','Notas'];
+  const rows=hist.map(h=>[new Date(h.fecha).toLocaleString('es-CL'),h.cliente,h.negocio,h.email,h.rub,h.tipo==='pro'?'MP Pro':'Escala',h.extra,h.estado,h.notas||''].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','));
+  const csv=[hdr.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}));
+  a.download='propuestas-mp-'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click(); toast('📥 CSV exportado');
+}
+function limpiarHistorial(){
+  if(!confirm('¿Eliminar todo el historial?'))return;
+  try{localStorage.removeItem('mp_prop')}catch(e){}
+  renderHist(); toast('🗑 Historial eliminado');
+}
+
+/* ════════════════════════════════════════
+   EMAIL HTML · MP PRO
+════════════════════════════════════════ */
+function bldHTMLPro(d) {
+  const sal = salTxt(d);
+  const simTable = `<table width="100%" cellpadding="0" cellspacing="0" style="border-radius:8px;overflow:hidden;border:1px solid #E0E8F0;margin-bottom:14px">
+<tr style="background:#F5F6F8"><th style="padding:9px 12px;font-size:11px;color:#666;font-weight:600;text-align:left;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:.04em;width:34%">Concepto</th><th style="padding:9px 12px;font-size:11px;color:#00874A;font-weight:700;text-align:center;background:#E8F5E9;font-family:Arial,sans-serif">💳 Débito</th><th style="padding:9px 12px;font-size:11px;color:#006BA6;font-weight:700;text-align:center;background:#E8F5FC;font-family:Arial,sans-serif">💳 Crédito contado</th></tr>
+<tr><td style="padding:8px 12px;font-size:13px;color:#666;border-top:1px solid #EEE;font-family:Arial,sans-serif">Ticket</td><td style="padding:8px 12px;text-align:center;border-top:1px solid #EEE;background:#F7FCF9;font-family:'Courier New',monospace;font-size:13px">$${d.tkt}</td><td style="padding:8px 12px;text-align:center;border-top:1px solid #EEE;background:#F5FBFF;font-family:'Courier New',monospace;font-size:13px">$${d.tkt}</td></tr>
+<tr><td style="padding:8px 12px;font-size:13px;color:#666;border-top:1px solid #EEE;font-family:Arial,sans-serif">Com. fija</td><td style="padding:8px 12px;text-align:center;border-top:1px solid #EEE;background:#F7FCF9;color:#FF7733;font-family:'Courier New',monospace;font-size:13px">− $${d.dComF}</td><td style="padding:8px 12px;text-align:center;border-top:1px solid #EEE;background:#F5FBFF;color:#FF7733;font-family:'Courier New',monospace;font-size:13px">− $${d.cComF}</td></tr>
+<tr><td style="padding:8px 12px;font-size:13px;color:#666;border-top:1px solid #EEE;font-family:Arial,sans-serif">Com. porcentual</td><td style="padding:8px 12px;text-align:center;border-top:1px solid #EEE;background:#F7FCF9;color:#FF7733;font-family:'Courier New',monospace;font-size:13px">− $${d.dComP}</td><td style="padding:8px 12px;text-align:center;border-top:1px solid #EEE;background:#F5FBFF;color:#FF7733;font-family:'Courier New',monospace;font-size:13px">− $${d.cComP}</td></tr>
+<tr><td style="padding:8px 12px;font-size:13px;color:#666;border-top:1px solid #EEE;font-family:Arial,sans-serif">IVA 19%</td><td style="padding:8px 12px;text-align:center;border-top:1px solid #EEE;background:#F7FCF9;color:#FF7733;font-family:'Courier New',monospace;font-size:13px">− $${d.dIva}</td><td style="padding:8px 12px;text-align:center;border-top:1px solid #EEE;background:#F5FBFF;color:#FF7733;font-family:'Courier New',monospace;font-size:13px">− $${d.cIva}</td></tr>
+<tr><td style="padding:10px 12px;font-size:14px;font-weight:700;color:#333;border-top:2px solid #CCC;background:#F5F6F8;font-family:Arial,sans-serif">Usted recibe</td><td style="padding:10px 12px;font-size:18px;font-weight:700;color:#00A650;text-align:center;border-top:2px solid #CCC;background:#E8F5E9;font-family:'Courier New',monospace">$${d.dLiq}</td><td style="padding:10px 12px;font-size:18px;font-weight:700;color:#006BA6;text-align:center;border-top:2px solid #CCC;background:#E8F5FC;font-family:'Courier New',monospace">$${d.cLiq}</td></tr>
+</table><p style="margin:0 0 0;font-size:10px;color:#999;font-family:Arial,sans-serif">IVA incluido en comisión · Liquidez inmediata al segundo</p>`;
+
+  return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#F0F4F8;font-family:Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#F0F4F8;padding:32px 16px"><tr><td align="center">
+<table width="620" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:10px;overflow:hidden;border:1px solid #E0E0E0;box-shadow:0 4px 20px rgba(0,0,0,.07)">
+<tr><td style="background:#009EE3;padding:24px 32px">
+  <p style="margin:0 0 4px;font-size:11px;color:rgba(255,255,255,.75);letter-spacing:.1em;font-weight:700;font-family:Arial,sans-serif">MERCADO PAGO PRO</p>
+  <p style="margin:0;font-size:19px;color:#fff;font-weight:700;font-family:Arial,sans-serif">Propuesta para ${d.neg}</p>
+  ${d.rub?`<p style="margin:3px 0 0;font-size:12px;color:rgba(255,255,255,.7);font-family:Arial,sans-serif">${d.rub}</p>`:''}
+</td></tr>
+<tr><td style="padding:28px 32px;color:#333;font-size:14px;line-height:1.75;font-family:Arial,sans-serif">
+  <p style="margin:0 0 14px">Buenas tardes, <strong>${d.cli}</strong>, un gusto saludarte.</p>
+  <p style="margin:0 0 20px;color:#555">${sal} <strong>${d.neg}</strong>, he diseñado una propuesta basada en nuestro modelo de <strong>Mercado Pago Pro</strong>. Modelo que cuenta con tasas más bajas que el promedio del mercado, que te ayuda a mejorar tus márgenes en cada venta.</p>
+  <p style="margin:0 0 20px;color:#333;font-weight:600">Los pilares de tu propuesta:</p>
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:22px"><tr><td style="border-left:3px solid #009EE3;padding:2px 0 2px 16px">
+    <p style="margin:0 0 8px;font-size:15px;font-weight:700;color:#009EE3;font-family:Arial,sans-serif">1. Mercado Pago Pro</p>
+    <p style="margin:0 0 10px;color:#555;font-family:Arial,sans-serif">Por una suscripción fija de <strong style="color:#333">$15.500 + IVA al mes</strong>, accedes a beneficios de nivel corporativo.</p>
+    <p style="margin:0;font-size:14px;color:#444;font-family:Arial,sans-serif;line-height:1.7">
+      <strong>Incluye:</strong> Smart POS 2, Boletas Electrónicas (efectivo incluido), soporte prioritario, garantía de por vida y ejecutivo de cartera.
+    </p>
+  </td></tr></table>
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:22px"><tr><td style="border-left:3px solid #009EE3;padding:2px 0 2px 16px">
+    <p style="margin:0 0 8px;font-size:15px;font-weight:700;color:#009EE3;font-family:Arial,sans-serif">2. Comisiones preferenciales · dinero disponible al instante</p>
+    <p style="margin:0 0 10px;color:#555;font-family:Arial,sans-serif">Proyecté que tu TPV mensual supera los <strong>$${d.tpv}</strong>, por lo que las condiciones serían:</p>
+    <table cellpadding="0" cellspacing="0" style="margin-bottom:16px">
+      <tr><td style="vertical-align:top;padding:4px 10px 4px 0"><span style="display:inline-block;width:7px;height:7px;background:#009EE3;border-radius:50%;margin-top:4px"></span></td><td style="padding:4px 0;font-size:14px;color:#444;font-family:Arial,sans-serif"><strong>Tasa Débito:</strong> $${d.fjD} + (${d.prD}) + IVA</td></tr>
+      <tr><td style="vertical-align:top;padding:4px 10px 4px 0"><span style="display:inline-block;width:7px;height:7px;background:#009EE3;border-radius:50%;margin-top:4px"></span></td><td style="padding:4px 0;font-size:14px;color:#444;font-family:Arial,sans-serif"><strong>Tasa Crédito:</strong> $${d.fjC} + (${d.prC}) + IVA</td></tr>
+      <tr><td style="vertical-align:top;padding:4px 10px 4px 0"><span style="display:inline-block;width:7px;height:7px;background:#009EE3;border-radius:50%;margin-top:4px"></span></td><td style="padding:4px 0;font-size:14px;color:#444;font-family:Arial,sans-serif"><strong>Liquidez inmediata:</strong> Cada venta se acredita al instante en tu cuenta sin importar el método de pago de tu cliente — sin esperas, sin plazos.</td></tr>
+    </table>
+    <p style="margin:0 0 10px;font-size:12px;font-weight:700;color:#333;letter-spacing:.04em;text-transform:uppercase;font-family:Arial,sans-serif">Simulación · Ticket de $${d.tkt}</p>
+    ${simTable}
+  </td></tr></table>
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:22px"><tr><td style="border-left:3px solid #009EE3;padding:2px 0 2px 16px">
+    <p style="margin:0 0 8px;font-size:15px;font-weight:700;color:#009EE3;font-family:Arial,sans-serif">3. Cuotas sin interés (opcional)</p>
+    <p style="margin:0 0 12px;color:#555;font-family:Arial,sans-serif">¿Quieres aumentar el valor de tu ticket de venta? Ofrece hasta 12 cuotas sin interés y recibís el total al instante.</p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;border-radius:6px;overflow:hidden;border:1px solid #D0E8F5">
+      <tr style="background:#009EE3"><th style="padding:8px;color:#fff;font-size:13px;text-align:center">3x</th><th style="padding:8px;color:#fff;font-size:13px;text-align:center">6x</th><th style="padding:8px;color:#fff;font-size:13px;text-align:center">9x</th><th style="padding:8px;color:#fff;font-size:13px;text-align:center">12x</th></tr>
+      <tr style="background:#F7F9FC"><td style="padding:8px;text-align:center;font-size:14px;font-weight:700;color:#333">1,99%</td><td style="padding:8px;text-align:center;font-size:14px;font-weight:700;color:#333">3,49%</td><td style="padding:8px;text-align:center;font-size:14px;font-weight:700;color:#333">4,99%</td><td style="padding:8px;text-align:center;font-size:14px;font-weight:700;color:#333">6,99%</td></tr>
+    </table>
+    <p style="margin:0 0 8px;font-size:14px;color:#555;font-family:Arial,sans-serif">Calculado para cuotas <strong>${d.cqN}</strong> con un ticket de <strong>$${d.tktQ}</strong>:</p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#E8F0FB;border-left:4px solid #009EE3;border-radius:0 6px 6px 0;margin-bottom:10px"><tr><td style="padding:12px 16px;font-size:13px;color:#004D80;font-weight:600;font-family:Arial,sans-serif">${d.fml}</td></tr></table>
+    <p style="margin:0;font-size:14px;color:#555;font-family:Arial,sans-serif">En una venta de <strong>$${d.tktQ}</strong>, recibís <strong style="color:#2E7D32;font-size:15px">$${d.qLiq}</strong> al instante.</p>
+  </td></tr></table>
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#E8F5FE;border-left:4px solid #009EE3;border-radius:0 8px 8px 0;margin-bottom:20px"><tr><td style="padding:14px 18px;font-size:14px;color:#004D80;line-height:1.7;font-family:Arial,sans-serif">Lo más potente de Mercado Pago Pro, es que no solo te libera tasas competitivas, sino que te abre las puertas a todo nuestro ecosistema con beneficios preferenciales. <strong>Link de Pago</strong>, <strong>Checkout Web</strong> para tu e-commerce o integrarse directamente con <strong>Mercado Libre</strong>. Básicamente, potencias todo tu negocio desde un solo lugar.</td></tr></table>
+  ${d.notas?`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px"><tr><td style="background:#FFFBEA;border-left:3px solid #FFE600;border-radius:0 6px 6px 0;padding:12px 16px;font-size:13px;color:#5D4A00;font-family:Arial,sans-serif;line-height:1.6">${d.notas}</td></tr></table>`:''}
+  <p style="margin:0 0 14px;font-size:14px;color:#555;font-family:Arial,sans-serif;line-height:1.75">Si tienes alguna duda o prefieres que revisemos el impacto real de estas tasas en tus números actuales, me encantaría agendar una breve reunión de 15 minutos. Te puedo visitar o coordinar una videollamada, lo que te resulte más cómodo para definir los próximos pasos.</p>
+  <p style="margin:0 0 22px;font-size:14px;color:#333;font-family:Arial,sans-serif;line-height:1.75"><strong>Mi meta es que tengas la seguridad de estar adquiriendo una herramienta que realmente potencie tu operación.</strong> Como tu ejecutivo directo, estaré disponible para todo lo que necesites.</p>
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#009EE3;border-radius:8px;margin-bottom:4px"><tr><td style="padding:18px 24px;text-align:center"><p style="margin:0 0 10px;font-size:14px;color:#fff;font-family:Arial,sans-serif">¿Te gustaría que revisemos el impacto real en tus números actuales?</p><span style="display:inline-block;background:#fff;color:#009EE3;font-size:13px;font-weight:700;padding:10px 28px;border-radius:6px;font-family:Arial,sans-serif">Agendar reunión de 15 minutos</span></td></tr></table>
+</td></tr>
+<tr><td style="background:#F7F9FC;border-top:1px solid #E0E0E0;padding:16px 32px">
+  <table width="100%" cellpadding="0" cellspacing="0"><tr>
+    <td style="font-size:12px;color:#888;font-family:Arial,sans-serif"><strong style="color:#555">${d.ejec}</strong> · Ejecutivo Mercado Pago · ${d.tel}</td>
+    <td style="text-align:right"><span style="font-size:11px;background:#E6F2FA;color:#0077B5;border-radius:99px;padding:4px 12px;font-weight:700;font-family:Arial,sans-serif">Propuesta confidencial</span></td>
+  </tr></table>
+</td></tr>
+</table></td></tr></table></body></html>`;
+}
+
+/* ════════════════════════════════════════
+   EMAIL HTML · PRICING POR ESCALA
+════════════════════════════════════════ */
+function bldHTMLEsc(d) {
+  const sal = salTxt(d);
+  const bolBlock = d.inclBol ? `
+<tr><td style="padding:0 40px"><div style="height:1px;background:#E8ECF0"></div></td></tr>
+<tr><td style="padding:24px 40px">
+  <table width="100%" cellpadding="0" cellspacing="0"><tr><td>
+    <table cellpadding="0" cellspacing="0" style="margin-bottom:8px"><tr>
+      <td style="width:3px;background:#FFE600;border-radius:2px">&nbsp;</td>
+      <td style="padding-left:14px">
+        <p style="margin:0 0 3px;font-size:16px;font-weight:700;color:#00366B;font-family:Arial,sans-serif">3. Boleta y Factura Electrónica</p>
+        <p style="margin:0;font-size:12px;color:#666F7E;font-family:Arial,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em">${d.mesesBol} meses gratis · usuarios nuevos</p>
+      </td>
+    </tr></table>
+    <p style="margin:0 0 12px;font-size:14px;color:#444B5A;line-height:1.7;font-family:Arial,sans-serif">Accedés a <strong>${d.mesesBol} meses completamente gratuitos</strong> de emisión ilimitada de documentos tributarios electrónicos:</p>
+    <table cellpadding="0" cellspacing="0" style="margin-bottom:14px">
+      <tr><td style="vertical-align:top;padding:3px 10px 3px 0"><span style="display:inline-block;width:6px;height:6px;background:#FFE600;border-radius:50%;margin-top:6px;border:1px solid #CCBA00"></span></td><td style="font-size:14px;color:#444B5A;padding:3px 0;font-family:Arial,sans-serif"><strong>${d.mesesBol} meses sin costo</strong> — emisión ilimitada de boletas electrónicas</td></tr>
+      <tr><td style="vertical-align:top;padding:3px 10px 3px 0"><span style="display:inline-block;width:6px;height:6px;background:#FFE600;border-radius:50%;margin-top:6px;border:1px solid #CCBA00"></span></td><td style="font-size:14px;color:#444B5A;padding:3px 0;font-family:Arial,sans-serif"><strong>Integrado</strong> con el Point Smart 2 y compatible con SII</td></tr>
+      <tr><td style="vertical-align:top;padding:3px 10px 3px 0"><span style="display:inline-block;width:6px;height:6px;background:#FFE600;border-radius:50%;margin-top:6px;border:1px solid #CCBA00"></span></td><td style="font-size:14px;color:#444B5A;padding:3px 0;font-family:Arial,sans-serif">Desde el mes ${d.mesPago}: <strong>$13.090 IVA incluido/mes</strong></td></tr>
+    </table>
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#E6F7EE;border-radius:8px;border:1px solid rgba(0,166,80,.15)"><tr><td style="padding:14px 16px">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr><td style="font-size:13px;color:#00874A;font-family:Arial,sans-serif;font-weight:600">Ahorro durante los ${d.mesesBol} meses de promoción</td><td style="text-align:right;font-size:20px;font-weight:700;color:#00A650;font-family:'Courier New',monospace">$${d.ahorro}</td></tr>
+        <tr><td colspan="2" style="font-size:11px;color:#4CAF80;padding-top:3px;font-family:Arial,sans-serif">${d.mesesBol} meses × $13.090 = $0 durante la promo</td></tr>
+      </table>
+    </td></tr></table>
+  </td></tr></table>
+</td></tr>` : '';
+
+  return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#F5F6F8;font-family:Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#F5F6F8;padding:32px 16px"><tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8ECF0;box-shadow:0 4px 24px rgba(0,54,107,.08)">
+<tr><td style="background:#00366B;padding:0">
+  <table width="100%" cellpadding="0" cellspacing="0">
+    <tr><td style="padding:24px 40px 0">
+      <p style="margin:0 0 4px;font-size:11px;color:rgba(255,255,255,.6);font-family:Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase">Propuesta comercial para</p>
+      <p style="margin:4px 0 0;font-size:20px;font-weight:700;color:#fff;font-family:Arial,sans-serif">${d.neg}</p>
+      ${d.rub?`<p style="margin:3px 0 0;font-size:12px;color:rgba(255,255,255,.6);font-family:Arial,sans-serif">${d.rub}</p>`:''}
+    </td></tr>
+    <tr><td style="height:4px;background:#FFE600"></td></tr>
+  </table>
+</td></tr>
+<tr><td style="padding:28px 40px 8px">
+  <p style="margin:0 0 10px;font-size:15px;color:#2D2D2D;font-family:Arial,sans-serif">Buenas tardes, <strong style="color:#00366B">${d.cli}</strong>,</p>
+  <p style="margin:0 0 18px;font-size:14px;color:#444B5A;line-height:1.75;font-family:Arial,sans-serif">${sal} <strong>${d.neg}</strong>, quiero presentarte una propuesta personalizada de <strong style="color:#009EE3">Mercado Pago Chile</strong>, con condiciones diseñadas para optimizar cada venta y tener el dinero disponible cuando lo necesitas.</p>
+  <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#009EE3;letter-spacing:.1em;text-transform:uppercase;font-family:Arial,sans-serif">Tu propuesta incluye</p>
+  <div style="height:2px;background:linear-gradient(90deg,#009EE3,#FFE600,transparent);margin-bottom:22px;border-radius:1px"></div>
+</td></tr>
+<tr><td style="padding:0 40px 26px">
+  <table cellpadding="0" cellspacing="0" style="margin-bottom:8px"><tr>
+    <td style="width:3px;background:#009EE3;border-radius:2px">&nbsp;</td>
+    <td style="padding-left:14px"><p style="margin:0 0 3px;font-size:16px;font-weight:700;color:#00366B;font-family:Arial,sans-serif">1. Point Smart 2 (N950)</p><p style="margin:0;font-size:12px;color:#666F7E;font-family:Arial,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Sin costo de arriendo mensual</p></td>
+  </tr></table>
+  <table cellpadding="0" cellspacing="0" style="margin-bottom:14px">
+    <tr><td style="vertical-align:top;padding:3px 10px 3px 0"><span style="display:inline-block;width:6px;height:6px;background:#009EE3;border-radius:50%;margin-top:6px"></span></td><td style="font-size:14px;color:#444B5A;padding:3px 0;font-family:Arial,sans-serif"><strong>${d.qty} terminal${d.qty>1?'es':''}</strong> — sin cargo mensual · $${d.precioUnit} IVA inc. c/u${d.qty>1?' · <strong>$'+d.totalEq+'</strong> total':''}</td></tr>
+    <tr><td style="vertical-align:top;padding:3px 10px 3px 0"><span style="display:inline-block;width:6px;height:6px;background:#009EE3;border-radius:50%;margin-top:6px"></span></td><td style="font-size:14px;color:#444B5A;padding:3px 0;font-family:Arial,sans-serif"><strong>Conectividad:</strong> 4G + Wi-Fi · batería larga duración · imprime comprobante</td></tr>
+    <tr><td style="vertical-align:top;padding:3px 10px 3px 0"><span style="display:inline-block;width:6px;height:6px;background:#009EE3;border-radius:50%;margin-top:6px"></span></td><td style="font-size:14px;color:#444B5A;padding:3px 0;font-family:Arial,sans-serif"><strong>Acepta:</strong> débito, crédito, prepago y billeteras digitales</td></tr>
+  </table>
+</td></tr>
+<tr><td style="padding:0 40px"><div style="height:1px;background:#E8ECF0"></div></td></tr>
+<tr><td style="padding:26px 40px">
+  <table cellpadding="0" cellspacing="0" style="margin-bottom:8px"><tr>
+    <td style="width:3px;background:#009EE3;border-radius:2px">&nbsp;</td>
+    <td style="padding-left:14px"><p style="margin:0 0 3px;font-size:16px;font-weight:700;color:#00366B;font-family:Arial,sans-serif">2. Tasas comerciales negociadas</p><p style="margin:0;font-size:12px;color:#666F7E;font-family:Arial,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Condiciones exclusivas · ${d.acredLabel}</p></td>
+  </tr></table>
+  <table cellpadding="0" cellspacing="0" style="margin-bottom:14px">
+    <tr><td style="vertical-align:top;padding:3px 10px 3px 0"><span style="display:inline-block;width:6px;height:6px;background:#009EE3;border-radius:50%;margin-top:6px"></span></td><td style="font-size:14px;color:#444B5A;padding:3px 0;font-family:Arial,sans-serif"><strong>Tasa Débito:</strong> ${d.prD} + IVA</td></tr>
+    <tr><td style="vertical-align:top;padding:3px 10px 3px 0"><span style="display:inline-block;width:6px;height:6px;background:#009EE3;border-radius:50%;margin-top:6px"></span></td><td style="font-size:14px;color:#444B5A;padding:3px 0;font-family:Arial,sans-serif"><strong>Tasa Crédito:</strong> ${d.prC} + IVA</td></tr>
+    <tr><td style="vertical-align:top;padding:3px 10px 3px 0"><span style="display:inline-block;width:6px;height:6px;background:#009EE3;border-radius:50%;margin-top:6px"></span></td><td style="font-size:14px;color:#444B5A;padding:3px 0;font-family:Arial,sans-serif">${d.acredBenef}</td></tr>
+  </table>
+  <p style="margin:0 0 10px;font-size:12px;font-weight:700;color:#2D2D2D;letter-spacing:.04em;text-transform:uppercase;font-family:Arial,sans-serif">Simulación · Ticket de $${d.tk}</p>
+  <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:8px;overflow:hidden;border:1px solid #E8ECF0">
+    <tr style="background:#F5F6F8"><th style="padding:10px 14px;font-size:11px;color:#666F7E;font-weight:600;text-align:left;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:.04em;width:36%">Concepto</th><th style="padding:10px 14px;font-size:11px;color:#00874A;font-weight:700;text-align:center;background:#E6F7EE;font-family:Arial,sans-serif">💳 Débito</th><th style="padding:10px 14px;font-size:11px;color:#006BA6;font-weight:700;text-align:center;background:#E8F5FC;font-family:Arial,sans-serif">💳 Crédito</th></tr>
+    <tr><td style="padding:9px 14px;font-size:13px;color:#666F7E;border-top:1px solid #E8ECF0;font-family:Arial,sans-serif">Ticket</td><td style="padding:9px 14px;text-align:center;border-top:1px solid #E8ECF0;background:#F7FCF9;font-family:'Courier New',monospace;font-size:13px">$${d.tk}</td><td style="padding:9px 14px;text-align:center;border-top:1px solid #E8ECF0;background:#F5FBFF;font-family:'Courier New',monospace;font-size:13px">$${d.tk}</td></tr>
+    <tr><td style="padding:9px 14px;font-size:13px;color:#666F7E;border-top:1px solid #E8ECF0;font-family:Arial,sans-serif">Comisión</td><td style="padding:9px 14px;text-align:center;border-top:1px solid #E8ECF0;background:#F7FCF9;color:#FF7733;font-family:'Courier New',monospace;font-size:13px">− $${d.dCom}</td><td style="padding:9px 14px;text-align:center;border-top:1px solid #E8ECF0;background:#F5FBFF;color:#FF7733;font-family:'Courier New',monospace;font-size:13px">− $${d.cCom}</td></tr>
+    <tr><td style="padding:9px 14px;font-size:13px;color:#666F7E;border-top:1px solid #E8ECF0;font-family:Arial,sans-serif">IVA 19%</td><td style="padding:9px 14px;text-align:center;border-top:1px solid #E8ECF0;background:#F7FCF9;color:#FF7733;font-family:'Courier New',monospace;font-size:13px">− $${d.dIva}</td><td style="padding:9px 14px;text-align:center;border-top:1px solid #E8ECF0;background:#F5FBFF;color:#FF7733;font-family:'Courier New',monospace;font-size:13px">− $${d.cIva}</td></tr>
+    <tr><td style="padding:12px 14px;font-size:14px;font-weight:700;color:#2D2D2D;border-top:2px solid #D0D5DD;background:#F5F6F8;font-family:Arial,sans-serif">Usted recibe</td><td style="padding:12px 14px;font-size:18px;font-weight:700;color:#00A650;text-align:center;border-top:2px solid #D0D5DD;background:#E6F7EE;font-family:'Courier New',monospace">$${d.dLiq}</td><td style="padding:12px 14px;font-size:18px;font-weight:700;color:#006BA6;text-align:center;border-top:2px solid #D0D5DD;background:#E8F5FC;font-family:'Courier New',monospace">$${d.cLiq}</td></tr>
+  </table>
+  <p style="margin:6px 0 0;font-size:10px;color:#999;font-family:Arial,sans-serif">IVA incluido en comisión · Acreditación ${d.acred} — dinero ${d.acredCorto}</p>
+</td></tr>
+${bolBlock}
+${d.notas?`<tr><td style="padding:0 40px 18px"><div style="background:#FFFBEA;border-left:3px solid #FFE600;border-radius:0 6px 6px 0;padding:12px 16px;font-size:13px;color:#5D4A00;font-family:Arial,sans-serif;line-height:1.6">${d.notas}</div></td></tr>`:''}
+<tr><td style="padding:0 40px 28px">
+  <div style="height:1px;background:#E8ECF0;margin-bottom:20px"></div>
+  <p style="margin:0 0 12px;font-size:14px;color:#444B5A;line-height:1.8;font-family:Arial,sans-serif">Si querés que revisemos el impacto real en tus números, me encantaría agendar <strong>15 minutos</strong>. Te visito o coordinamos una videollamada.</p>
+  <p style="margin:0 0 20px;font-size:14px;color:#444B5A;line-height:1.8;font-family:Arial,sans-serif"><strong style="color:#00366B">Como tu ejecutivo directo, estaré disponible para todo lo que necesites.</strong></p>
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFE600;border-radius:10px;margin-bottom:20px"><tr>
+    <td style="padding:18px 22px"><p style="margin:0 0 3px;font-size:17px;font-weight:700;color:#00366B;font-family:Arial,sans-serif">Revisemos tu propuesta con números reales</p><p style="margin:0;font-size:13px;color:#333;font-family:Arial,sans-serif">15 minutos · Sin compromiso · A tu comodidad</p></td>
+    <td style="padding:18px 22px 18px 0;text-align:right;white-space:nowrap"><span style="display:inline-block;background:#00366B;color:#FFE600;font-size:13px;font-weight:700;padding:10px 20px;border-radius:8px;font-family:Arial,sans-serif">Agendar →</span></td>
+  </tr></table>
+  <p style="margin:0 0 2px;font-size:15px;font-weight:700;color:#00366B;font-family:Arial,sans-serif">${d.ejec}</p>
+  <p style="margin:0 0 1px;font-size:12px;color:#666F7E;font-family:Arial,sans-serif">Ejecutivo Comercial · Mercado Pago Chile</p>
+  <p style="margin:0;font-size:12px;color:#009EE3;font-weight:600;font-family:Arial,sans-serif">${d.tel}</p>
+</td></tr>
+<tr><td style="background:#00366B;padding:14px 40px;border-top:3px solid #FFE600">
+  <table width="100%" cellpadding="0" cellspacing="0"><tr>
+    <td style="font-size:11px;color:rgba(255,255,255,.55);font-family:Arial,sans-serif">© 2026 Mercado Pago S.A. · Chile</td>
+    <td style="text-align:right"><span style="font-size:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.65);border-radius:99px;padding:3px 10px;font-family:Arial,sans-serif;font-weight:700">PROPUESTA CONFIDENCIAL</span></td>
+  </tr></table>
+</td></tr>
+</table></td></tr></table></body></html>`;
+}
+
+/* ════════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+g('cli').addEventListener('input', syncStepBar);
+g('neg').addEventListener('input', syncStepBar);
+rcPro();
+rcEsc();
+try { renderHist(); } catch(e) {}
+</script>
+</body>
+</html>
